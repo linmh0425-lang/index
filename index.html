@@ -1,0 +1,136 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>红外热态测量三端 Demo</title>
+  <style>
+    :root {
+      color-scheme: light;
+      --blue: #1263ff;
+      --cyan: #00c8ff;
+      --ink: #17233d;
+      --muted: #63718a;
+      --line: #dce8f4;
+      --panel: rgba(255, 255, 255, .94);
+      --bg: #f4f8fd;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      min-height: 100vh;
+      font-family: "Microsoft YaHei", Arial, sans-serif;
+      color: var(--ink);
+      background:
+        radial-gradient(circle at 12% 10%, rgba(18, 99, 255, .12), transparent 28%),
+        radial-gradient(circle at 86% 18%, rgba(0, 200, 255, .12), transparent 30%),
+        var(--bg);
+    }
+    main {
+      width: min(1080px, calc(100% - 48px));
+      margin: 0 auto;
+      padding: 64px 0;
+    }
+    .brand {
+      letter-spacing: 8px;
+      font-weight: 900;
+      font-size: 30px;
+      margin-bottom: 18px;
+    }
+    h1 {
+      margin: 0;
+      font-size: 34px;
+      line-height: 1.25;
+    }
+    .sub {
+      margin: 14px 0 36px;
+      color: var(--muted);
+      font-size: 16px;
+      line-height: 1.8;
+    }
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 18px;
+    }
+    .card {
+      display: flex;
+      flex-direction: column;
+      min-height: 210px;
+      padding: 24px;
+      text-decoration: none;
+      color: inherit;
+      background: var(--panel);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      box-shadow: 0 18px 45px rgba(28, 58, 98, .08);
+      transition: transform .16s ease, box-shadow .16s ease, border-color .16s ease;
+    }
+    .card:hover {
+      transform: translateY(-3px);
+      border-color: #8fc2ff;
+      box-shadow: 0 22px 60px rgba(18, 99, 255, .15);
+    }
+    .tag {
+      display: inline-flex;
+      align-items: center;
+      width: fit-content;
+      height: 26px;
+      padding: 0 10px;
+      border-radius: 999px;
+      background: #eef5ff;
+      color: var(--blue);
+      font-size: 13px;
+      font-weight: 800;
+    }
+    h2 {
+      margin: 18px 0 10px;
+      font-size: 21px;
+    }
+    p {
+      margin: 0;
+      color: var(--muted);
+      line-height: 1.7;
+      font-size: 14px;
+    }
+    .arrow {
+      margin-top: auto;
+      padding-top: 24px;
+      color: var(--blue);
+      font-weight: 900;
+    }
+    @media (max-width: 860px) {
+      main { width: min(100% - 28px, 540px); padding: 36px 0; }
+      .grid { grid-template-columns: 1fr; }
+      h1 { font-size: 28px; }
+    }
+  </style>
+</head>
+<body>
+  <main>
+    <div class="brand">VISBODY</div>
+    <h1>红外热态测量三端 Demo</h1>
+    <p class="sub">用于查看大中台配置、WellnessHub 报告预览、H5 移动端报告三端原型。</p>
+    <section class="grid" aria-label="Demo 列表">
+      <a class="card" href="./wellnesshub-admin-infrared-config-demo.html">
+        <span class="tag">大中台</span>
+        <h2>红外能力配置</h2>
+        <p>模拟设备配置弹窗中的红外热态测量开关，用于展示设备能力配置与门店生效前置条件。</p>
+        <div class="arrow">打开 Demo →</div>
+      </a>
+      <a class="card" href="./wellnesshub-thermal-demo.html">
+        <span class="tag">WellnessHub</span>
+        <h2>红外报告预览</h2>
+        <p>展示本次热态图、首次/再次测量切换、重点变化卡片、整体评估与 PDF 报告预览。</p>
+        <div class="arrow">打开 Demo →</div>
+      </a>
+      <a class="card" href="./infrared-h5-demo.html">
+        <span class="tag">H5</span>
+        <h2>移动端报告</h2>
+        <p>展示首次测量与再次测量两种状态，突出热成像对比、部位变化、整体评估与部位详情。</p>
+        <div class="arrow">打开 Demo →</div>
+      </a>
+    </section>
+  </main>
+</body>
+</html>

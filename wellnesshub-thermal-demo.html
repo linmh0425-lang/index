@@ -1,0 +1,1339 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>WellnessHub 红外热态测量 Demo</title>
+  <style>
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      min-width: 1440px;
+      color: #17233d;
+      font-family: Arial, "Microsoft YaHei", sans-serif;
+      background: linear-gradient(135deg, #fff 0%, #f8fbff 55%, #fffaf2 100%);
+    }
+    header {
+      height: 58px;
+      display: grid;
+      grid-template-columns: 300px 1fr 300px;
+      align-items: center;
+      padding: 0 24px;
+      background: #fff;
+      border-bottom: 1px solid #edf1f6;
+    }
+    .brand { display: flex; align-items: center; gap: 14px; }
+    .logo { font-size: 34px; font-weight: 900; letter-spacing: 8px; color: #17213a; }
+    .powered { color: #c4cbd8; font-size: 12px; }
+    .platform-title { text-align: center; font-size: 22px; font-weight: 900; color: #111827; }
+    .account { display: flex; justify-content: flex-end; align-items: center; gap: 18px; color: #1f2a44; }
+    .badge-gem {
+      width: 24px; height: 24px; border-radius: 50%;
+      background: radial-gradient(circle at 35% 30%, #fff, #a95cff 42%, #7b34e8 74%);
+      box-shadow: 0 0 0 3px #f2e9ff;
+    }
+    .layout { display: grid; grid-template-columns: 184px 1fr; min-height: calc(100vh - 58px); }
+    .sidebar {
+      position: relative;
+      padding: 16px 10px;
+      background: rgba(255, 255, 255, .88);
+      border-right: 1px solid #eef2f7;
+    }
+    .menu-section { padding-bottom: 14px; margin-bottom: 12px; border-bottom: 1px solid #eef2f7; }
+    .menu-title { margin: 0 6px 8px; color: #526174; font-size: 13px; }
+    .menu-item {
+      height: 34px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 0 10px;
+      border-radius: 5px;
+      color: #43536a;
+      font-size: 14px;
+    }
+    .menu-item.active { background: #eaf3ff; color: #1263ff; font-weight: 800; }
+    .menu-ico { width: 12px; height: 12px; border: 1px solid #7d8aa0; border-radius: 2px; }
+    .version { position: absolute; left: 14px; bottom: 14px; color: #91a0b4; font-size: 12px; }
+    .content { padding: 22px 24px 30px; }
+    .detail-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding-bottom: 12px;
+      border-bottom: 1px solid #e1e8f2;
+      color: #748198;
+    }
+    .meta { display: flex; align-items: center; gap: 10px; }
+    .back { color: #17233d; cursor: pointer; }
+    .detail-actions { display: flex; gap: 12px; align-items: center; }
+    .square-btn {
+      width: 30px; height: 30px;
+      display: inline-grid; place-items: center;
+      border: 1px solid #dde6f2;
+      border-radius: 3px;
+      color: #1263ff;
+      background: #fff;
+      cursor: pointer;
+    }
+    .ai-btn {
+      height: 34px;
+      border: 0;
+      border-radius: 4px;
+      padding: 0 18px;
+      background: #1263ff;
+      color: #fff;
+      font-weight: 900;
+      cursor: pointer;
+    }
+    .tabs { display: flex; gap: 10px; padding: 12px 0 8px; }
+    .tab {
+      height: 34px;
+      min-width: 86px;
+      display: grid;
+      place-items: center;
+      border-radius: 3px;
+      color: #253650;
+      background: #eaf3fb;
+      font-weight: 900;
+    }
+    .tab.active { color: #fff; background: #1263ff; }
+    .section-line {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-top: 12px;
+      margin-bottom: 10px;
+    }
+    .section-title { margin: 0; font-size: 18px; font-weight: 900; }
+    .measure-mode-tabs {
+      display: inline-flex;
+      padding: 4px;
+      border: 1px solid #d9e7f7;
+      border-radius: 999px;
+      background: #f3f8ff;
+      gap: 2px;
+    }
+    .measure-mode-tabs button,
+    .view-switch button,
+    .compare-view-switch button {
+      height: 30px;
+      min-width: 74px;
+      border: 0;
+      border-radius: 999px;
+      background: transparent;
+      color: #63738a;
+      font-weight: 900;
+      cursor: pointer;
+    }
+    .measure-mode-tabs button.active,
+    .view-switch button.active,
+    .compare-view-switch button.active {
+      color: #fff;
+      background: #1263ff;
+      box-shadow: 0 5px 14px rgba(18, 99, 255, .22);
+    }
+    .thermal-warning {
+      padding: 12px 14px;
+      margin-bottom: 14px;
+      border: 1px solid #cfe2ff;
+      border-radius: 4px;
+      color: #465a76;
+      background: #f5fbff;
+      font-size: 14px;
+    }
+    .thermal-workbench {
+      display: grid;
+      grid-template-columns: minmax(620px, 760px) minmax(560px, 1fr);
+      gap: 18px;
+      align-items: stretch;
+    }
+    .thermal-board,
+    .analysis-panel,
+    .thermal-compare-detail {
+      background: #fff;
+      border: 1px solid #e4ecf6;
+      border-radius: 6px;
+      box-shadow: 0 12px 30px rgba(24, 56, 90, .06);
+    }
+    .board-head,
+    .panel-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 16px 18px;
+      border-bottom: 1px solid #ecf1f7;
+    }
+    .board-title,
+    .panel-title,
+    .compare-title {
+      position: relative;
+      padding-left: 18px;
+      font-size: 18px;
+      font-weight: 900;
+    }
+    .board-title::before,
+    .panel-title::before,
+    .compare-title::before {
+      content: "";
+      position: absolute;
+      left: 0; top: 2px;
+      width: 6px; height: 22px;
+      border-radius: 99px;
+      background: linear-gradient(180deg, #15b8ff, #1263ff);
+    }
+    .view-switch,
+    .compare-view-switch {
+      display: inline-flex;
+      padding: 4px;
+      border: 1px solid #d9e7f7;
+      border-radius: 999px;
+      background: #f3f8ff;
+      gap: 2px;
+    }
+    .heatbox-title {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      height: 36px;
+      margin: 14px 16px 0;
+      padding: 0 12px;
+      border: 1px solid #d5e6fb;
+      border-bottom: 0;
+      border-radius: 5px 5px 0 0;
+      background: #eaf4ff;
+      font-weight: 900;
+    }
+    .heatbox-title small { color: #65758c; font-weight: 700; }
+    .heat-tool-row {
+      height: 40px;
+      margin: 0 16px;
+      display: flex;
+      justify-content: flex-end;
+      align-items: center;
+      border: 1px solid #d5e6fb;
+      border-bottom: 0;
+      padding: 0 12px;
+      background: #f7fbff;
+    }
+    .heat-tool-row button {
+      height: 28px;
+      border: 1px solid #d4e4fa;
+      border-radius: 999px;
+      padding: 0 12px;
+      background: #fff;
+      color: #1263ff;
+      font-weight: 900;
+      cursor: pointer;
+    }
+    .heat-stage-shell {
+      position: relative;
+      margin: 0 16px;
+      border: 1px solid #d5e6fb;
+      border-radius: 0 0 5px 5px;
+      overflow: hidden;
+    }
+    .heat-area {
+      position: relative;
+      height: 560px;
+      display: grid;
+      grid-template-columns: 1fr 52px;
+      overflow: hidden;
+      background:
+        linear-gradient(45deg, #f7f9fc 25%, transparent 25%),
+        linear-gradient(-45deg, #f7f9fc 25%, transparent 25%),
+        linear-gradient(45deg, transparent 75%, #f7f9fc 75%),
+        linear-gradient(-45deg, transparent 75%, #f7f9fc 75%);
+      background-size: 24px 24px;
+      background-position: 0 0, 0 12px, 12px -12px, -12px 0;
+    }
+    .heat-area.quad {
+      height: 760px;
+    }
+    .heat-area.duo {
+      height: 560px;
+    }
+    .heat-canvas {
+      position: relative;
+      height: 100%;
+      display: grid;
+      grid-template-columns: minmax(0, 1fr);
+      gap: 0;
+      transform-origin: center center;
+      transition: transform .18s ease;
+      min-width: 0;
+    }
+    .heat-canvas.repeat {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      grid-template-rows: 46px repeat(2, minmax(0, 1fr));
+      gap: 1px;
+      background: #d5e6fb;
+    }
+    .heat-canvas.duo {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 1px;
+      background: #d5e6fb;
+    }
+    .heat-canvas.is-dragging { cursor: grabbing; transition: none; }
+    .heat-pane {
+      position: relative;
+      height: 100%;
+      display: grid;
+      grid-template-rows: 34px 1fr 40px;
+      min-width: 0;
+    }
+    .heat-pane-head {
+      display: grid;
+      place-items: center;
+      background: #eaf4ff;
+      color: #26364f;
+      font-weight: 900;
+    }
+    .compare-column-head {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      background: #edf6ff;
+      color: #50637f;
+      font-weight: 900;
+      border-bottom: 1px solid #d5e6fb;
+    }
+    .compare-column-head b {
+      color: #17233d;
+      font-size: 15px;
+    }
+    .compare-column-head span {
+      color: #697991;
+      font-size: 13px;
+      font-weight: 800;
+    }
+    .heat-canvas.repeat .heat-pane {
+      grid-template-rows: 32px 1fr;
+    }
+    .heat-canvas.repeat .heat-date {
+      display: none;
+    }
+    .photo-stage {
+      position: relative;
+      display: grid;
+      place-items: center;
+      min-height: 0;
+      overflow: visible;
+    }
+    .thermal-photo {
+      display: block;
+      max-height: 460px;
+      max-width: 88%;
+      object-fit: contain;
+      user-select: none;
+      pointer-events: none;
+    }
+    .heat-canvas.repeat .thermal-photo {
+      max-height: 245px;
+      max-width: 72%;
+    }
+    .heat-canvas.duo .thermal-photo {
+      max-height: 420px;
+      max-width: 76%;
+    }
+    .center-float-pill {
+      left: 50%;
+      top: 50%;
+      transform: translate(-50%, -50%);
+    }
+    .compare-float-pill {
+      position: absolute;
+      left: 52%;
+      top: 46%;
+      z-index: 8;
+      min-width: 118px;
+      display: grid;
+      place-items: center;
+      gap: 3px;
+      padding: 14px 16px;
+      border: 1px solid rgba(18, 99, 255, .22);
+      border-radius: 999px;
+      background: rgba(255, 255, 255, .94);
+      box-shadow: 0 18px 36px rgba(32, 76, 126, .22);
+      transform: translate(-50%, -50%);
+      text-align: center;
+      cursor: pointer;
+    }
+    .compare-float-pill.center-float-pill {
+      left: 50%;
+      top: 50%;
+      transform: translate(-50%, -50%);
+    }
+    .compare-float-pill.front-row {
+      top: 36%;
+    }
+    .compare-float-pill.back-row {
+      top: 72%;
+    }
+    .compare-float-pill b {
+      color: #ef4444;
+      font-size: 22px;
+      line-height: 1;
+    }
+    .compare-float-pill b.down { color: #1263ff; }
+    .compare-float-pill b.flat { color: #16a34a; }
+    .compare-float-pill span {
+      color: #607089;
+      font-size: 12px;
+      font-weight: 800;
+    }
+    .heat-canvas.repeat .compare-float-pill {
+      min-width: 106px;
+      padding: 10px 12px;
+    }
+    .heat-canvas.repeat .compare-float-pill b {
+      font-size: 18px;
+    }
+    .heat-date {
+      display: grid;
+      place-items: center;
+      color: #62738b;
+      background: rgba(245, 250, 255, .9);
+      border-top: 1px solid #e4edf7;
+      font-weight: 900;
+    }
+    .temperature-scale {
+      display: grid;
+      grid-template-columns: 14px 1fr;
+      align-items: center;
+      padding: 62px 8px 68px 0;
+      background: rgba(255,255,255,.72);
+    }
+    .temperature-bar {
+      width: 14px;
+      height: 100%;
+      border-radius: 999px;
+      background: linear-gradient(180deg, #d40000 0%, #ff7a00 20%, #fff100 40%, #54d93b 58%, #23b9d8 78%, #254fd2 100%);
+    }
+    .temperature-ticks {
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      padding-left: 5px;
+      color: #586984;
+      font-size: 12px;
+    }
+    .overall-thtl {
+      margin: 12px 16px 16px;
+      padding: 12px;
+      color: #63738c;
+      background: #f6fbff;
+      border: 1px solid #dbeaf9;
+      border-radius: 5px;
+    }
+    .roi-layer { position: absolute; inset: 0; }
+    .roi-hotspot,
+    .roi-mean-capsule {
+      position: absolute;
+      border: 0;
+      cursor: pointer;
+    }
+    .roi-hotspot {
+      background: transparent;
+      border-radius: 999px;
+    }
+    .roi-hotspot:hover,
+    .roi-hotspot.active {
+      outline: 2px solid rgba(18, 99, 255, .42);
+      background: rgba(18, 99, 255, .08);
+    }
+    .neck { left: 43%; top: 24%; width: 15%; height: 9%; }
+    .chest { left: 36%; top: 34%; width: 28%; height: 12%; }
+    .abdomen { left: 38%; top: 47%; width: 24%; height: 14%; }
+    .waist { left: 39%; top: 48%; width: 22%; height: 12%; }
+    .spine { left: 45%; top: 32%; width: 10%; height: 30%; }
+    .hip { left: 37%; top: 61%; width: 26%; height: 12%; }
+    .roi-mean-capsule {
+      z-index: 3;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      height: 34px;
+      padding: 0 13px;
+      border-radius: 999px;
+      border: 1px solid #b8d8ff;
+      background: rgba(255,255,255,.96);
+      box-shadow: 0 10px 24px rgba(21, 54, 93, .18);
+      color: #1263ff;
+      font-weight: 900;
+      white-space: nowrap;
+    }
+    .roi-mean-capsule b { color: #17233d; }
+    .roi-mean-capsule.center-float-pill {
+      z-index: 9;
+      left: 50%;
+      top: 50%;
+      min-width: 116px;
+      height: auto;
+      min-height: 62px;
+      justify-content: center;
+      flex-direction: column;
+      gap: 4px;
+      padding: 12px 16px;
+      transform: translate(-50%, -50%);
+      border-color: rgba(18, 99, 255, .26);
+      box-shadow: 0 18px 36px rgba(32, 76, 126, .2);
+    }
+    .roi-mean-capsule.neck { left: 58%; top: 24%; }
+    .roi-mean-capsule.chest { left: 63%; top: 38%; }
+    .roi-mean-capsule.abdomen { left: 62%; top: 52%; }
+    .roi-mean-capsule.waist { left: 62%; top: 51%; }
+    .roi-mean-capsule.spine { left: 56%; top: 42%; }
+    .roi-mean-capsule.hip { left: 63%; top: 63%; }
+    .analysis-panel { padding: 20px 22px; }
+    .panel-head { padding: 0 0 16px; border-bottom: 0; }
+    .panel-head small { color: #7b8798; }
+    .metric-card-grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 14px;
+      margin-bottom: 24px;
+    }
+    .metric-card {
+      min-height: 126px;
+      border: 1px solid #dbe8f7;
+      border-radius: 8px;
+      background: linear-gradient(180deg, #fff, #f8fbff);
+      padding: 16px;
+      text-align: left;
+      cursor: pointer;
+      transition: .16s ease;
+    }
+    .metric-card:hover,
+    .metric-card.active {
+      border-color: #8fc2ff;
+      box-shadow: 0 10px 22px rgba(18, 99, 255, .12);
+      transform: translateY(-1px);
+    }
+    .metric-index {
+      width: 30px;
+      height: 30px;
+      display: grid;
+      place-items: center;
+      border-radius: 50%;
+      background: #eaf4ff;
+      color: #1263ff;
+      font-weight: 900;
+      margin-bottom: 10px;
+    }
+    .metric-name { display: block; font-size: 18px; font-weight: 900; color: #17233d; }
+    .metric-sub { display: block; margin-top: 4px; color: #6d7b90; font-weight: 700; }
+    .metric-value {
+      display: inline-block;
+      margin-top: 12px;
+      padding: 5px 12px;
+      border-radius: 999px;
+      font-size: 18px;
+      font-weight: 900;
+      color: #ef4444;
+      background: #fff0f0;
+    }
+    .metric-value.diff { color: #1263ff; background: #eef5ff; }
+    .region-popover {
+      margin-bottom: 22px;
+      overflow: auto;
+      border: 1px solid #dbe8f7;
+      border-radius: 8px;
+      background: #fff;
+      box-shadow: 0 18px 42px rgba(31, 75, 124, .18);
+      display: none;
+    }
+    .region-popover.show {
+      display: block;
+    }
+    .selected-detail-head {
+      display: flex;
+      justify-content: space-between;
+      gap: 16px;
+      padding: 14px 44px 14px 16px;
+      border-bottom: 1px solid #e6edf6;
+      background: linear-gradient(180deg, #f8fbff 0%, #fff 100%);
+      position: relative;
+    }
+    .region-popover-close {
+      position: absolute;
+      top: 11px;
+      right: 12px;
+      width: 26px;
+      height: 26px;
+      border: 1px solid #d9e7f8;
+      border-radius: 50%;
+      background: #fff;
+      color: #607089;
+      font-size: 18px;
+      line-height: 1;
+      cursor: pointer;
+    }
+    .selected-detail-title {
+      display: grid;
+      gap: 4px;
+    }
+    .selected-detail-title span {
+      color: #7b8798;
+      font-size: 12px;
+      font-weight: 800;
+    }
+    .selected-detail-title strong {
+      color: #17233d;
+      font-size: 20px;
+      font-weight: 900;
+    }
+    .selected-detail-badge {
+      align-self: flex-start;
+      padding: 6px 12px;
+      border-radius: 999px;
+      color: #ef4444;
+      background: #fff0f0;
+      font-size: 15px;
+      font-weight: 900;
+      white-space: nowrap;
+    }
+    .selected-detail-badge.down { color: #1263ff; background: #eef5ff; }
+    .selected-detail-badge.flat,
+    .selected-detail-badge.diff { color: #1263ff; background: #eef5ff; }
+    .selected-detail-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 10px;
+      padding: 14px 16px;
+    }
+    .detail-stat {
+      min-height: 62px;
+      padding: 10px 12px;
+      border: 1px solid #e2eaf4;
+      border-radius: 6px;
+      background: #fbfdff;
+    }
+    .detail-stat span {
+      display: block;
+      color: #7b8798;
+      font-size: 12px;
+      font-weight: 800;
+    }
+    .detail-stat b {
+      display: block;
+      margin-top: 5px;
+      color: #17233d;
+      font-size: 18px;
+      font-weight: 900;
+    }
+    .part-evaluation {
+      padding: 0 16px 16px;
+    }
+    .part-evaluation h4 {
+      margin: 0 0 10px;
+      color: #17233d;
+      font-size: 16px;
+      font-weight: 900;
+    }
+    .part-evaluation-list {
+      display: grid;
+      gap: 8px;
+    }
+    .part-evaluation-row {
+      display: grid;
+      grid-template-columns: 92px 1fr;
+      min-height: 44px;
+      border: 1px solid #e2eaf4;
+      border-radius: 6px;
+      overflow: hidden;
+      background: #fff;
+    }
+    .part-evaluation-row strong {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 10px;
+      color: #17233d;
+      background: #edf5ff;
+      font-weight: 900;
+    }
+    .part-evaluation-row span {
+      display: flex;
+      align-items: center;
+      padding: 10px 12px;
+      color: #40516b;
+      line-height: 1.55;
+    }
+    .overall-evaluation {
+      border-top: 1px solid #e6edf6;
+      padding-top: 18px;
+    }
+    .overall-evaluation-title {
+      margin: 0 0 12px;
+      font-size: 18px;
+      font-weight: 900;
+    }
+    .insight-list { display: grid; gap: 10px; }
+    .insight-item {
+      display: grid;
+      grid-template-columns: 112px 1fr;
+      min-height: 48px;
+      border: 1px solid #e2eaf4;
+      border-radius: 6px;
+      overflow: hidden;
+      background: #fff;
+    }
+    .insight-item strong {
+      display: grid;
+      place-items: center;
+      background: #edf5ff;
+      color: #17233d;
+    }
+    .insight-item span {
+      display: flex;
+      align-items: center;
+      padding: 10px 14px;
+      line-height: 1.55;
+      color: #40516b;
+    }
+    .thermal-compare-detail {
+      margin-top: 18px;
+      padding: 18px;
+    }
+    .thermal-compare-detail,
+    .thermal-compare-detail.hidden { display: none; }
+    .compare-head {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 14px;
+    }
+    .compare-title { font-size: 18px; font-weight: 900; }
+    .compare-image-pair {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+    }
+    .compare-image-pair .heat-pane {
+      height: 440px;
+      border: 1px solid #dbe8f7;
+      border-radius: 8px;
+      overflow: hidden;
+      display: grid;
+      grid-template-rows: 34px 1fr 42px;
+      background:
+        linear-gradient(45deg, #f7f9fc 25%, transparent 25%),
+        linear-gradient(-45deg, #f7f9fc 25%, transparent 25%),
+        linear-gradient(45deg, transparent 75%, #f7f9fc 75%),
+        linear-gradient(-45deg, transparent 75%, #f7f9fc 75%);
+      background-size: 24px 24px;
+      background-position: 0 0, 0 12px, 12px -12px, -12px 0;
+    }
+    .compare-image-pair .thermal-photo {
+      max-height: 330px;
+      max-width: 86%;
+    }
+    .compare-pane-body {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) 210px;
+      min-height: 0;
+    }
+    .compare-pane-body .photo-stage {
+      min-height: 0;
+      overflow: hidden;
+    }
+    .heat-image-metrics {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 10px;
+      align-content: center;
+      padding: 14px;
+      border-left: 1px solid #dbe8f7;
+      background: rgba(248, 251, 255, .94);
+    }
+    .heat-image-metric {
+      padding: 12px;
+      border: 1px solid rgba(18, 99, 255, .18);
+      border-radius: 6px;
+      background: rgba(255, 255, 255, .92);
+      box-shadow: 0 8px 18px rgba(25, 70, 120, .08);
+    }
+    .heat-image-metric span {
+      display: block;
+      margin-bottom: 4px;
+      color: #7b8798;
+      font-size: 12px;
+    }
+    .heat-image-metric b {
+      display: block;
+      color: #17233d;
+      font-size: 16px;
+    }
+    .global-report-note {
+      margin-top: 18px;
+      border: 1px solid #e0e8f4;
+      border-radius: 6px;
+      overflow: hidden;
+      color: #607089;
+    }
+    .global-report-note div { padding: 12px 16px; }
+    .global-report-note div + div { background: #f1f5fa; border-top: 1px solid #e0e8f4; }
+    .pdf-overlay {
+      position: fixed;
+      inset: 0;
+      z-index: 50;
+      display: none;
+      align-items: flex-start;
+      justify-content: center;
+      padding: 32px 0;
+      overflow: auto;
+      background: rgba(20, 28, 42, .62);
+    }
+    .pdf-overlay.show { display: flex; }
+    .pdf-shell { position: relative; }
+    .pdf-close {
+      position: sticky;
+      top: 8px;
+      float: right;
+      z-index: 2;
+      height: 32px;
+      margin: 0 0 8px 8px;
+      border: 1px solid #d7e3f1;
+      border-radius: 4px;
+      background: #fff;
+      color: #1263ff;
+      font-weight: 900;
+      cursor: pointer;
+    }
+    .pdf-page {
+      width: 794px;
+      min-height: 1123px;
+      padding: 34px 38px;
+      background: #fff;
+      color: #17233d;
+      box-shadow: 0 20px 60px rgba(0, 0, 0, .26);
+      font-family: "Microsoft YaHei", Arial, sans-serif;
+    }
+    .pdf-head {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) 104px;
+      gap: 24px;
+      align-items: start;
+      min-height: 128px;
+      border-bottom: 3px solid #16a8f5;
+      padding-bottom: 14px;
+      box-sizing: border-box;
+    }
+    .pdf-logo {
+      letter-spacing: 7px;
+      font-size: 24px;
+      line-height: 1;
+      font-weight: 900;
+    }
+    .pdf-title {
+      margin-top: 14px;
+      font-size: 31px;
+      line-height: 1.08;
+      font-weight: 900;
+      white-space: nowrap;
+    }
+    .pdf-meta {
+      display: flex;
+      gap: 8px 18px;
+      flex-wrap: wrap;
+      margin-top: 14px;
+      max-width: 560px;
+      font-size: 13px;
+      line-height: 1.35;
+    }
+    .pdf-qr-wrap { justify-self: end; width: 96px; }
+    .pdf-qr-label { text-align: center; font-size: 12px; line-height: 1.25; margin-bottom: 7px; }
+    .pdf-qr {
+      width: 82px;
+      height: 82px;
+      border: 2px solid #111827;
+      background:
+        linear-gradient(90deg, #111827 10px, transparent 10px) 0 0/24px 24px,
+        linear-gradient(#111827 10px, transparent 10px) 0 0/24px 24px,
+        #fff;
+    }
+    .pdf-note {
+      margin: 14px 0 16px;
+      padding: 9px 10px;
+      border: 1px solid #d5e6fb;
+      background: #f7fbff;
+      color: #53657d;
+      font-size: 12px;
+      line-height: 1.45;
+    }
+    .pdf-thermal-strip {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr) 34px;
+      border: 1px solid #24a8ff;
+      margin-bottom: 18px;
+    }
+    .pdf-figure { border-right: 1px solid #cfe7ff; }
+    .pdf-figure-title {
+      text-align: center;
+      padding: 7px;
+      background: #eaf6ff;
+      font-weight: 900;
+      font-size: 13px;
+    }
+    .pdf-figure-body {
+      height: 210px;
+      display: grid;
+      place-items: center;
+      background:
+        linear-gradient(45deg, #f7f9fc 25%, transparent 25%),
+        linear-gradient(-45deg, #f7f9fc 25%, transparent 25%),
+        linear-gradient(45deg, transparent 75%, #f7f9fc 75%),
+        linear-gradient(-45deg, transparent 75%, #f7f9fc 75%);
+      background-size: 18px 18px;
+      background-position: 0 0, 0 9px, 9px -9px, -9px 0;
+    }
+    .pdf-figure-body img { max-height: 190px; max-width: 92%; object-fit: contain; }
+    .pdf-figure-foot { padding: 6px 8px; font-size: 11px; color: #53657d; background: #fbfdff; }
+    .pdf-scale {
+      display: grid;
+      grid-template-rows: 28px 1fr;
+      padding: 0 5px 9px;
+      background: #fbfdff;
+    }
+    .pdf-scale-title { text-align: center; font-size: 12px; padding-top: 7px; }
+    .pdf-scale-body { display: grid; grid-template-columns: 12px 1fr; gap: 5px; align-items: stretch; }
+    .pdf-scale-bar { border-radius: 999px; background: linear-gradient(180deg, #d40000 0%, #ff7a00 20%, #fff100 40%, #54d93b 58%, #23b9d8 78%, #254fd2 100%); }
+    .pdf-scale-labels { display: flex; flex-direction: column; justify-content: space-between; font-size: 11px; color: #53657d; }
+    .pdf-section-title {
+      margin: 12px 0 8px;
+      font-size: 22px;
+      font-weight: 900;
+    }
+    .pdf-section-title small { font-size: 13px; font-weight: 400; }
+    .pdf-table {
+      width: 100%;
+      border-collapse: collapse;
+      border: 1px solid #24a8ff;
+      font-size: 13px;
+    }
+    .pdf-table th {
+      background: #eaf6ff;
+      padding: 8px;
+      border: 1px solid #d3e7fb;
+    }
+    .pdf-table td {
+      padding: 8px;
+      text-align: center;
+      border: 1px solid #dce8f4;
+    }
+    .pdf-blue { color: #0877ff; font-weight: 900; }
+    .pdf-up { color: #ef4444; font-weight: 900; }
+    .pdf-down { color: #1263ff; font-weight: 900; }
+    .pdf-summary {
+      border: 1px solid #24a8ff;
+      font-size: 13px;
+    }
+    .pdf-summary-row {
+      display: grid;
+      grid-template-columns: 96px 1fr;
+      border-top: 1px solid #dce8f4;
+    }
+    .pdf-summary-row:first-child { border-top: 0; }
+    .pdf-summary-row strong {
+      padding: 10px;
+      background: #eaf6ff;
+    }
+    .pdf-summary-row span {
+      padding: 10px 12px;
+      line-height: 1.55;
+    }
+    .pdf-footer {
+      margin-top: 18px;
+      padding-top: 12px;
+      border-top: 2px solid #16a8f5;
+      color: #53657d;
+      font-size: 12px;
+      line-height: 1.7;
+    }
+    .toast {
+      position: fixed;
+      right: 24px;
+      bottom: 24px;
+      padding: 10px 16px;
+      border-radius: 6px;
+      background: rgba(17, 24, 39, .9);
+      color: #fff;
+      opacity: 0;
+      transform: translateY(20px);
+      pointer-events: none;
+      transition: .2s ease;
+    }
+    .toast.show { opacity: 1; transform: translateY(0); }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="brand"><div class="logo">VISBODY</div><div class="powered">Powered by Kuafu</div></div>
+    <div class="platform-title">维塑数字健康平台</div>
+    <div class="account"><span>简体中文</span><span class="badge-gem"></span><span>SZtest</span></div>
+  </header>
+  <div class="layout">
+    <aside class="sidebar">
+      <div class="menu-section"><div class="menu-title">报告管理</div><div class="menu-item"><span class="menu-ico"></span>用户信息绑定</div><div class="menu-item active"><span class="menu-ico"></span>报告列表</div></div>
+      <div class="menu-section"><div class="menu-title">用户管理</div><div class="menu-item"><span class="menu-ico"></span>用户管理</div><div class="menu-item"><span class="menu-ico"></span>用户分配</div></div>
+      <div class="menu-section"><div class="menu-title">门店管理</div><div class="menu-item"><span class="menu-ico"></span>门店管理</div><div class="menu-item"><span class="menu-ico"></span>子门店权限管理</div></div>
+      <div class="menu-section"><div class="menu-title">设备管理</div><div class="menu-item"><span class="menu-ico"></span>设备列表</div></div>
+      <div class="menu-section"><div class="menu-title">系统设置</div><div class="menu-item"><span class="menu-ico"></span>员工权限管理</div><div class="menu-item"><span class="menu-ico"></span>员工账号</div><div class="menu-item"><span class="menu-ico"></span>缴费记录</div><div class="menu-item"><span class="menu-ico"></span>对接管理</div></div>
+      <div class="version">版本 v2.11.2</div>
+    </aside>
+    <main class="content">
+      <div class="detail-top">
+        <div class="meta"><span class="back">← 返回</span><span>ID: openAPI-test</span><span>|</span><span>15919917597</span><span>|</span><span>男</span><span>|</span><span>180 cm</span><span>|</span><span>35岁</span><span>·</span><span>2026-06-03 19:24:14</span></div>
+        <div class="detail-actions"><span class="square-btn">↓</span><span class="square-btn">✉</span><span class="square-btn" id="pdfBtn" title="PDF报告预览">□</span><button class="ai-btn">AI报告解读</button></div>
+      </div>
+      <div class="tabs"><span class="tab">身体成分</span><span class="tab">体态评估</span><span class="tab">脊柱评估</span><span class="tab">体围测量</span><span class="tab">肩部功能</span><span class="tab">颈部功能</span><span class="tab active">热态测量</span></div>
+      <div class="section-line">
+        <h3 class="section-title">红外热态测量</h3>
+        <div class="measure-mode-tabs" aria-label="测量类型切换">
+          <button class="active" data-measure-mode="first" type="button">首次测量</button>
+          <button data-measure-mode="repeat" type="button">再次测量</button>
+        </div>
+      </div>
+      <div class="thermal-warning"><strong>测量提示：</strong>隔衣测量会受衣物材质、厚度和遮挡影响；本报告重点用于观察热态分布与前后变化趋势。</div>
+      <div class="thermal-workbench">
+        <section class="thermal-board">
+          <div class="board-head">
+            <div class="board-title" id="boardTitle">本次热态图</div>
+            <div class="view-switch" aria-label="正背面切换">
+              <button class="active" data-thermal-view="front" type="button">正面</button>
+              <button data-thermal-view="back" type="button">背面</button>
+            </div>
+          </div>
+          <div class="heatbox-title"><span id="heatboxTitle">本次测量</span><small id="heatboxHint">点击热图部位查看对应区域均温</small></div>
+          <div class="heat-tool-row"><button type="button" data-heat-tool="reset">复位视图</button></div>
+          <div class="heat-stage-shell">
+            <div class="heat-area" id="heatArea">
+              <div class="heat-canvas" id="heatCanvas"></div>
+              <div class="temperature-scale">
+                <div class="temperature-bar"></div>
+                <div class="temperature-ticks"><span>40℃</span><span>38</span><span>36</span><span>34</span><span>32</span><span>30</span></div>
+              </div>
+            </div>
+          </div>
+          <div class="overall-thtl" id="overallThtl">本次正面整体：TH 36.8℃ / TL 33.4℃</div>
+        </section>
+        <aside class="analysis-panel">
+          <div class="panel-head">
+            <div class="panel-title" id="panelTitle">左右温差较大部位</div>
+            <small id="panelHint">按本次左右温差排序</small>
+          </div>
+          <div class="metric-card-grid" id="metricCardGrid"></div>
+          <section class="region-popover" id="selectedDetail" aria-label="当前部位详情" aria-hidden="true">
+            <div class="selected-detail-head">
+              <div class="selected-detail-title">
+                <span id="selectedDetailMode">当前选中部位</span>
+                <strong id="selectedDetailName">肩颈</strong>
+              </div>
+              <div class="selected-detail-badge" id="selectedDetailBadge">区域均温 35.4℃</div>
+              <button class="region-popover-close" data-region-popover-close type="button" aria-label="关闭部位详情">×</button>
+            </div>
+            <div class="selected-detail-grid" id="selectedDetailStats"></div>
+            <div class="part-evaluation">
+              <h4>部位评估</h4>
+              <div class="part-evaluation-list" id="partEvaluationList"></div>
+            </div>
+          </section>
+          <div class="overall-evaluation">
+            <h4 class="overall-evaluation-title">整体评估</h4>
+            <div class="insight-list">
+              <div class="insight-item" id="summaryChangeRow"><strong>变化重点</strong><span id="summaryChange">肩颈、腰部和腹部较上次变化更明显，其中腰部变化最大，为 ↑0.7℃。</span></div>
+              <div class="insight-item"><strong>分布表现</strong><span>整体热态分布较平稳，肩颈和腰部区域温度相对更高，局部存在轻微温度起伏。</span></div>
+              <div class="insight-item"><strong>左右差异</strong><span>左右差异建议结合站姿、衣着遮挡、局部受压和当次测量状态综合查看。</span></div>
+              <div class="insight-item"><strong>服务提示</strong><span>如相关部位近期体感变化明显，可向门店人员或专业服务人员进一步咨询。</span></div>
+            </div>
+          </div>
+        </aside>
+      </div>
+      <div class="global-report-note"><div><strong>复测提示：</strong>建议在相同环境、衣着、站位和静止条件下进行阶段性复测。</div><div><strong>声明：</strong>本报告仅用于体表热态变化展示与健康管理沟通参考，不作为医学诊断或治疗依据。</div></div>
+    </main>
+  </div>
+  <div id="pdfOverlay" class="pdf-overlay" aria-hidden="true">
+    <div class="pdf-shell">
+      <button id="pdfClose" class="pdf-close" type="button">关闭预览</button>
+      <article class="pdf-page">
+        <header class="pdf-head">
+          <div>
+            <div class="pdf-logo">VISBODY</div>
+            <div class="pdf-title">红外热态测量报告</div>
+            <div class="pdf-meta"><span>ID: 159****5797</span><span>性别：男</span><span>身高：180 cm</span><span>年龄：35岁</span><span>报告编号：IR20260603001</span></div>
+          </div>
+          <div class="pdf-qr-wrap"><div class="pdf-qr-label">扫码查看报告</div><div class="pdf-qr"></div></div>
+        </header>
+        <div class="pdf-note">测量提示：隔衣测量会受衣物材质、厚度和遮挡影响；本报告重点用于观察热态分布与前后变化趋势。</div>
+        <section class="pdf-thermal-strip">
+          <div class="pdf-figure"><div class="pdf-figure-title">正面 - 上次</div><div class="pdf-figure-body"><img src="thermal-front-reference.png" alt="正面上次热图" /></div><div class="pdf-figure-foot">上次 TH 36.6℃ / TL 33.2℃</div></div>
+          <div class="pdf-figure"><div class="pdf-figure-title">正面 - 本次</div><div class="pdf-figure-body"><img src="thermal-front-reference.png" alt="正面本次热图" /></div><div class="pdf-figure-foot">本次 TH 36.8℃ / TL 33.4℃</div></div>
+          <div class="pdf-figure"><div class="pdf-figure-title">背面 - 上次</div><div class="pdf-figure-body"><img src="thermal-front-reference.png" alt="背面上次热图" /></div><div class="pdf-figure-foot">上次 TH 36.4℃ / TL 33.1℃</div></div>
+          <div class="pdf-figure"><div class="pdf-figure-title">背面 - 本次</div><div class="pdf-figure-body"><img src="thermal-front-reference.png" alt="背面本次热图" /></div><div class="pdf-figure-foot">本次 TH 36.5℃ / TL 33.1℃</div></div>
+          <div class="pdf-scale"><div class="pdf-scale-title">温度</div><div class="pdf-scale-body"><div class="pdf-scale-bar"></div><div class="pdf-scale-labels"><span>40℃</span><span>38</span><span>36</span><span>34</span><span>32</span><span>30</span></div></div></div>
+        </section>
+        <h3 class="pdf-section-title">热态数据 <small>℃</small></h3>
+        <table class="pdf-table">
+          <thead><tr><th>部位</th><th>上次区域均温</th><th>本次区域均温</th><th>区域高值</th><th>区域低值</th><th>左右温差</th><th>变化值</th></tr></thead>
+          <tbody>
+            <tr><td>肩颈</td><td>34.8</td><td class="pdf-blue">35.4</td><td>36.2</td><td>34.6</td><td>右高0.2℃</td><td class="pdf-up">↑ 0.6</td></tr>
+            <tr><td>胸部</td><td>35.1</td><td class="pdf-blue">35.2</td><td>35.9</td><td>34.9</td><td>右高0.1℃</td><td class="pdf-up">↑ 0.1</td></tr>
+            <tr><td>腹部</td><td>34.2</td><td class="pdf-blue">34.7</td><td>35.6</td><td>34.1</td><td>左高0.2℃</td><td class="pdf-up">↑ 0.5</td></tr>
+            <tr><td>腰部</td><td>33.9</td><td class="pdf-blue">34.6</td><td>35.5</td><td>33.8</td><td>右高0.3℃</td><td class="pdf-up">↑ 0.7</td></tr>
+            <tr><td>脊柱</td><td>34.4</td><td class="pdf-blue">34.5</td><td>35.1</td><td>34.0</td><td>-</td><td class="pdf-up">↑ 0.1</td></tr>
+            <tr><td>臀部</td><td>33.9</td><td class="pdf-blue">33.8</td><td>34.8</td><td>33.2</td><td>左高0.4℃</td><td class="pdf-down">↓ 0.1</td></tr>
+          </tbody>
+        </table>
+        <h3 class="pdf-section-title">整体评估</h3>
+        <section class="pdf-summary">
+          <div class="pdf-summary-row"><strong>变化重点</strong><span>肩颈、腰部和腹部较上次变化更明显，其中腰部变化最大，为 ↑0.7℃。</span></div>
+          <div class="pdf-summary-row"><strong>分布表现</strong><span>整体热态分布较平稳，肩颈和腰部区域温度相对更高，局部存在轻微温度起伏。</span></div>
+          <div class="pdf-summary-row"><strong>左右差异</strong><span>腰部和臀部左右温差相对更明显，可结合站姿、体态习惯和局部受压情况查看。</span></div>
+          <div class="pdf-summary-row"><strong>服务提示</strong><span>如相关部位近期体感变化明显，可向门店人员或专业服务人员进一步咨询。</span></div>
+        </section>
+        <footer class="pdf-footer">
+          <div>复测提示：建议在相同环境、衣着、站位和静止条件下进行阶段性复测。</div>
+          <div>声明：本报告仅用于体表热态变化展示与健康管理沟通参考，不作为医学诊断或治疗依据。</div>
+        </footer>
+      </article>
+    </div>
+  </div>
+  <div id="toast" class="toast">当前为静态 Demo</div>
+  <script>
+    const state = { mode: "repeat", view: "front", selected: "frontShoulderNeck", detailOpen: false, scale: 1, x: 0, y: 0, dragging: false, startX: 0, startY: 0 };
+    const metrics = [
+      { key: "frontShoulderNeck", viewLabel: "正面", name: "肩颈", views: ["front"], regionClass: "neck", last: 34.8, present: 35.4, high: 36.2, low: 34.6, change: 0.6, diff: "右高0.2℃" },
+      { key: "chest", viewLabel: "正面", name: "胸部", views: ["front"], regionClass: "chest", last: 35.1, present: 35.2, high: 35.9, low: 34.9, change: 0.1, diff: "右高0.1℃" },
+      { key: "abdomen", viewLabel: "正面", name: "腹部", views: ["front"], regionClass: "abdomen", last: 34.2, present: 34.7, high: 35.6, low: 34.1, change: 0.5, diff: "左高0.2℃" },
+      { key: "backShoulderNeck", viewLabel: "背面", name: "肩颈", views: ["back"], regionClass: "neck", last: 34.7, present: 35.2, high: 36.0, low: 34.4, change: 0.5, diff: "左高0.2℃" },
+      { key: "waist", viewLabel: "背面", name: "腰部", views: ["back"], regionClass: "waist", last: 33.9, present: 34.6, high: 35.5, low: 33.8, change: 0.7, diff: "右高0.3℃" },
+      { key: "spine", viewLabel: "背面", name: "脊柱", views: ["back"], regionClass: "spine", last: 34.4, present: 34.5, high: 35.1, low: 34.0, change: 0.1, diff: "-" },
+      { key: "hip", viewLabel: "背面", name: "臀部", views: ["back"], regionClass: "hip", last: 33.9, present: 33.8, high: 34.8, low: 33.2, change: -0.1, diff: "左高0.4℃" }
+    ];
+    const overall = { front: "本次正面整体：TH 36.8℃ / TL 33.4℃", back: "本次背面整体：TH 36.5℃ / TL 33.1℃" };
+    const getMetric = (key) => metrics.find((item) => item.key === key) || metrics[0];
+    const visible = () => metrics.filter((item) => item.views.includes(state.view));
+    const visibleByView = (view) => metrics.filter((item) => item.views.includes(view));
+    const formatChange = (value) => Math.abs(value) < .05 ? "0.0℃" : `${value > 0 ? "↑" : "↓"}${Math.abs(value).toFixed(1)}℃`;
+    const changeClass = (value) => Math.abs(value) < .05 ? "flat" : value > 0 ? "up" : "down";
+    const level = (value) => Math.abs(value) < .3 ? "变化较小" : Math.abs(value) < .6 ? "存在一定变化" : "变化较明显";
+    const diffValue = (item) => {
+      const match = item.diff.match(/[左右]高([0-9.]+)℃/);
+      return match ? Number(match[1]) : 0;
+    };
+    function sideTemperature(item) {
+      const match = item.diff.match(/([左右])高([0-9.]+)℃/);
+      if (!match) return null;
+      const higherSide = match[1];
+      const value = Number(match[2]);
+      const half = value / 2;
+      return {
+        left: higherSide === "左" ? item.present + half : item.present - half,
+        right: higherSide === "右" ? item.present + half : item.present - half,
+        higherSide,
+        value
+      };
+    }
+    function symmetryText(item) {
+      const side = sideTemperature(item);
+      if (!side) return "该部位不做左右差异评估。";
+      const sideText = side.higherSide === "右" ? "右侧较左侧" : "左侧较右侧";
+      const levelText = side.value < 0.3 ? "左右差异较小" : side.value < 0.6 ? "存在一定左右差异" : "左右差异较明显";
+      return `左侧 ${side.left.toFixed(1)}℃，右侧 ${side.right.toFixed(1)}℃；${sideText}高 ${side.value.toFixed(1)}℃，${levelText}。`;
+    }
+    function distributionText(item) {
+      const range = item.high - item.low;
+      const levelText = range >= 1.5 ? "温度起伏相对明显" : range >= 0.8 ? "存在一定温度起伏" : "温度分布相对平稳";
+      return `区域高值 ${item.high.toFixed(1)}℃、区域低值 ${item.low.toFixed(1)}℃，${levelText}。`;
+    }
+    const regionContext = (item) => {
+      const map = {
+        frontShoulderNeck: "可结合近期肩颈紧张、久坐低头、运动和衣着遮挡情况查看。",
+        chest: "可结合近期活动、衣着遮挡和体感变化综合查看。",
+        abdomen: "可结合近期饮食、活动和腹部体感变化综合查看。",
+        backShoulderNeck: "可结合肩背紧张、坐姿和局部受压情况查看。",
+        waist: "可结合站姿、腰背疲劳、久坐和局部受压情况查看。",
+        spine: "可结合站姿、背部受压和衣着遮挡情况查看。",
+        hip: "可结合站姿、坐姿习惯和局部受压情况查看。"
+      };
+      return map[item.key] || "可结合近期活动、衣着遮挡和体感变化综合查看。";
+    };
+    function renderSelectedDetail() {
+      const popover = document.getElementById("selectedDetail");
+      popover.classList.toggle("show", state.detailOpen);
+      popover.setAttribute("aria-hidden", String(!state.detailOpen));
+      if (!state.detailOpen) return;
+      const item = getMetric(state.selected);
+      const isFirst = state.mode === "first";
+      document.getElementById("selectedDetailMode").textContent = isFirst ? "当前选中部位" : `${item.viewLabel} · 当前选中部位`;
+      document.getElementById("selectedDetailName").textContent = item.name;
+      const badge = document.getElementById("selectedDetailBadge");
+      badge.className = `selected-detail-badge ${isFirst ? "diff" : changeClass(item.change)}`;
+      badge.textContent = isFirst ? `区域均温 ${item.present.toFixed(1)}℃` : `${formatChange(item.change)} · ${level(item.change)}`;
+
+      const side = sideTemperature(item);
+      const primaryStats = isFirst ? [
+        ["区域均温", `${item.present.toFixed(1)}℃`],
+        ["区域高值", `${item.high.toFixed(1)}℃`],
+        ["区域低值", `${item.low.toFixed(1)}℃`],
+        ["区域差值", `${(item.high - item.low).toFixed(1)}℃`]
+      ] : [
+        ["上次区域均温", `${item.last.toFixed(1)}℃`],
+        ["本次区域均温", `${item.present.toFixed(1)}℃`],
+        ["变化值", formatChange(item.change)],
+        ["区域高值", `${item.high.toFixed(1)}℃`],
+        ["区域低值", `${item.low.toFixed(1)}℃`],
+        ["区域差值", `${(item.high - item.low).toFixed(1)}℃`]
+      ];
+      const sideStats = side ? [
+        ["左侧均温", `${side.left.toFixed(1)}℃`],
+        ["右侧均温", `${side.right.toFixed(1)}℃`],
+        ["左右温差", item.diff]
+      ] : [["左右差异", "该部位不做左右差异评估"]];
+      const stats = [...primaryStats, ...sideStats];
+      document.getElementById("selectedDetailStats").innerHTML = stats.map(([label, value]) => `<div class="detail-stat"><span>${label}</span><b>${value}</b></div>`).join("");
+
+      const rows = isFirst ? [
+        ["热态印象", `${item.name}区域均温为 ${item.present.toFixed(1)}℃，可作为后续复测的参考基线。`],
+        ["分布表现", distributionText(item)],
+        ["左右差异", symmetryText(item)],
+        ["服务提示", regionContext(item)]
+      ] : [
+        ["变化情况", `${item.name}较上次${item.change >= 0 ? "升高" : "降低"} ${Math.abs(item.change).toFixed(1)}℃，${level(item.change)}。`],
+        ["分布表现", distributionText(item)],
+        ["左右差异", symmetryText(item)],
+        ["服务提示", `${regionContext(item)}如近期体感变化明显，可向门店人员或专业服务人员进一步咨询。`]
+      ];
+      document.getElementById("partEvaluationList").innerHTML = rows.map(([label, text]) => `<div class="part-evaluation-row"><strong>${label}</strong><span>${text}</span></div>`).join("");
+    }
+    function renderHeatStage() {
+      const canvas = document.getElementById("heatCanvas");
+      const heatArea = document.getElementById("heatArea");
+      const selected = getMetric(state.selected);
+      const isFirst = state.mode === "first";
+      canvas.classList.toggle("repeat", !isFirst);
+      canvas.classList.toggle("duo", isFirst);
+      heatArea.classList.toggle("quad", !isFirst);
+      heatArea.classList.toggle("duo", isFirst);
+      document.getElementById("boardTitle").textContent = isFirst ? "本次热态图" : "热成像对比";
+      document.getElementById("heatboxTitle").textContent = isFirst ? "本次测量" : "上次 / 本次";
+      document.getElementById("heatboxHint").textContent = isFirst ? "正背面同步展示；点击胶囊查看部位详情" : "同一行内查看上次与本次热态变化";
+      const hotspots = (view, prefix) => visibleByView(view).map((item) => `<button class="roi-hotspot ${item.regionClass} ${item.key === state.selected ? "active" : ""}" data-region-key="${item.key}" type="button" aria-label="${prefix}${item.name}"></button>`).join("");
+      const capsuleText = isFirst
+        ? `<button class="roi-mean-capsule center-float-pill" data-region-key="${selected.key}" data-detail-trigger type="button"><span>${selected.name}</span><b>${selected.present.toFixed(1)}℃</b></button>`
+        : "";
+      const repeatRowClass = selected.views.includes("front") ? "front-row" : "back-row";
+      const repeatPill = () => !isFirst
+        ? `<button class="compare-float-pill center-float-pill ${repeatRowClass}" data-region-key="${selected.key}" data-detail-trigger type="button"><b class="${changeClass(selected.change)}">${formatChange(selected.change)}</b><span>${level(selected.change)}</span></button>`
+        : "";
+      const pane = ({ title, date, view, current }) => `
+        <div class="heat-pane ${current ? "current" : "previous"}">
+          <div class="heat-pane-head">${title}</div>
+          <div class="photo-stage">
+            <img class="thermal-photo" src="thermal-front-reference.png" alt="${title}红外热图" />
+            <div class="roi-layer">${hotspots(view, title)}</div>
+          </div>
+          <div class="heat-date">${date}</div>
+        </div>`;
+      if (isFirst) {
+        canvas.innerHTML = [
+          pane({ title: "正面", date: "2026-06-03 19:24:14", view: "front", current: true }),
+          pane({ title: "背面", date: "2026-06-03 19:24:14", view: "back", current: true }),
+          capsuleText
+        ].join("");
+        return;
+      }
+      canvas.innerHTML = [
+        `<div class="compare-column-head"><b>上次</b><span>2026-05-08 18:35:52</span></div>`,
+        `<div class="compare-column-head"><b>本次</b><span>2026-06-03 19:24:14</span></div>`,
+        pane({ title: "正面", date: "", view: "front", current: false }),
+        pane({ title: "正面", date: "", view: "front", current: true }),
+        pane({ title: "背面", date: "", view: "back", current: false }),
+        pane({ title: "背面", date: "", view: "back", current: true }),
+        repeatPill()
+      ].join("");
+    }
+    function renderCards() {
+      const grid = document.getElementById("metricCardGrid");
+      const isFirst = state.mode === "first";
+      document.getElementById("panelTitle").textContent = isFirst ? "左右温差较大部位" : "变化最多部位";
+      document.getElementById("panelHint").textContent = isFirst ? "按本次左右温差排序" : "按本次与上次变化幅度排序";
+      const summaryChangeRow = document.getElementById("summaryChangeRow");
+      summaryChangeRow.style.display = isFirst ? "none" : "";
+      if (!isFirst) {
+        document.getElementById("summaryChange").textContent = "肩颈、腰部和腹部较上次变化更明显，其中腰部变化最大，为 ↑0.7℃。";
+      }
+      const ranked = [...metrics].filter((item) => isFirst ? diffValue(item) > 0 : true)
+        .sort((a, b) => isFirst ? diffValue(b) - diffValue(a) : Math.abs(b.change) - Math.abs(a.change))
+        .slice(0, 3);
+      grid.innerHTML = ranked.map((item, index) => `<button class="metric-card ${item.key === state.selected ? "active" : ""}" data-region-key="${item.key}" type="button"><span class="metric-index">${index + 1}</span><span class="metric-name">${item.name}</span><span class="metric-sub">${item.viewLabel} · ${isFirst ? "左右温差" : level(item.change)}</span><span class="metric-value ${isFirst ? "diff" : ""}">${isFirst ? item.diff : formatChange(item.change)}</span></button>`).join("");
+    }
+    function render() {
+      document.querySelectorAll("[data-measure-mode]").forEach((btn) => btn.classList.toggle("active", btn.dataset.measureMode === state.mode));
+      document.querySelectorAll("[data-thermal-view]").forEach((btn) => btn.classList.toggle("active", btn.dataset.thermalView === state.view));
+      document.getElementById("overallThtl").textContent = overall[state.view];
+      renderHeatStage();
+      renderCards();
+      renderSelectedDetail();
+    }
+    function applyTransform() {
+      document.getElementById("heatCanvas").style.transform = `translate(${state.x}px, ${state.y}px) scale(${state.scale})`;
+    }
+    function resetViewer() { state.scale = 1; state.x = 0; state.y = 0; applyTransform(); }
+    function zoom(delta) {
+      state.scale = Math.min(2.4, Math.max(1, state.scale + delta));
+      if (state.scale === 1) { state.x = 0; state.y = 0; }
+      applyTransform();
+    }
+    function openPdf() {
+      const overlay = document.getElementById("pdfOverlay");
+      overlay.classList.add("show");
+      overlay.setAttribute("aria-hidden", "false");
+    }
+    function closePdf() {
+      const overlay = document.getElementById("pdfOverlay");
+      overlay.classList.remove("show");
+      overlay.setAttribute("aria-hidden", "true");
+    }
+    render();
+    const heatArea = document.getElementById("heatArea");
+    const canvas = document.getElementById("heatCanvas");
+    heatArea.addEventListener("wheel", (event) => { event.preventDefault(); zoom(event.deltaY > 0 ? -.1 : .1); }, { passive: false });
+    canvas.addEventListener("pointerdown", (event) => {
+      if (event.target.closest("[data-region-key]")) return;
+      state.dragging = true;
+      state.startX = event.clientX - state.x;
+      state.startY = event.clientY - state.y;
+      canvas.classList.add("is-dragging");
+      canvas.setPointerCapture(event.pointerId);
+    });
+    canvas.addEventListener("pointermove", (event) => {
+      if (!state.dragging || state.scale <= 1) return;
+      state.x = event.clientX - state.startX;
+      state.y = event.clientY - state.startY;
+      applyTransform();
+    });
+    canvas.addEventListener("pointerup", () => { state.dragging = false; canvas.classList.remove("is-dragging"); });
+    document.addEventListener("click", (event) => {
+      if (event.target.closest("#pdfBtn")) { openPdf(); return; }
+      if (event.target.closest("#pdfClose") || event.target.id === "pdfOverlay") { closePdf(); return; }
+      const modeBtn = event.target.closest("[data-measure-mode]");
+      if (modeBtn) { state.mode = modeBtn.dataset.measureMode; state.detailOpen = false; render(); return; }
+      const viewBtn = event.target.closest("[data-thermal-view]");
+      if (viewBtn) { state.view = viewBtn.dataset.thermalView; state.detailOpen = false; render(); return; }
+      if (event.target.closest("[data-region-popover-close]")) { state.detailOpen = false; render(); return; }
+      const detailTrigger = event.target.closest("[data-detail-trigger]");
+      if (detailTrigger) { const item = getMetric(detailTrigger.dataset.regionKey); if (!item.views.includes(state.view)) state.view = item.views[0]; state.selected = item.key; state.detailOpen = true; render(); return; }
+      const regionBtn = event.target.closest("[data-region-key]");
+      if (regionBtn) { const item = getMetric(regionBtn.dataset.regionKey); if (!item.views.includes(state.view)) state.view = item.views[0]; state.selected = item.key; state.detailOpen = false; render(); return; }
+      const heatTool = event.target.closest("[data-heat-tool]");
+      if (heatTool) { resetViewer(); return; }
+    });
+    document.addEventListener("keydown", (event) => {
+      if (event.key === "Escape") { closePdf(); state.detailOpen = false; render(); }
+    });
+  </script>
+</body>
+</html>

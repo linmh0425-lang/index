@@ -1,0 +1,2312 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>红外热态测量 H5 Demo</title>
+    <style>
+      :root {
+        --bg: #11142b;
+        --bg-deep: #080b17;
+        --panel: #14294f;
+        --panel-2: #112449;
+        --line: #3b7bad;
+        --line-soft: rgba(80, 164, 224, 0.32);
+        --cyan: #02d7e4;
+        --cyan-2: #2deaf5;
+        --blue: #4f9eff;
+        --text: #f0f7ff;
+        --muted: #8fa2c0;
+        --danger: #ef5350;
+        --green: #2dcc83;
+        --orange: #ffa726;
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Microsoft YaHei", sans-serif;
+      }
+
+      * { box-sizing: border-box; }
+
+      body {
+        margin: 0;
+        min-height: 100vh;
+        color: var(--text);
+        background:
+          linear-gradient(180deg, #171b34 0%, #0b0f20 100%);
+      }
+
+      button { font: inherit; }
+
+      .phone {
+        width: min(100%, 420px);
+        min-height: 100vh;
+        margin: 0 auto;
+        overflow: hidden;
+        background:
+          linear-gradient(180deg, rgba(34, 39, 74, 0.98) 0%, rgba(16, 22, 47, 0.98) 44%, #090b17 100%);
+      }
+
+      .statusbar {
+        height: 28px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 0 12px;
+        color: #111;
+        background: #f7f7f7;
+        font-size: 13px;
+        font-weight: 650;
+      }
+
+      .app-title {
+        height: 48px;
+        display: grid;
+        grid-template-columns: 48px 1fr 48px;
+        align-items: center;
+        color: #111;
+        background: #f7f7f7;
+        border-bottom: 1px solid rgba(0, 0, 0, 0.08);
+      }
+
+      .app-title strong {
+        text-align: center;
+        font-size: 21px;
+        letter-spacing: 0;
+      }
+
+      .icon-btn {
+        border: 0;
+        background: transparent;
+        color: inherit;
+        font-size: 23px;
+        line-height: 1;
+        cursor: pointer;
+      }
+
+      .top-actions {
+        display: flex;
+        justify-content: space-between;
+        padding: 18px 18px 8px;
+        color: var(--cyan);
+      }
+
+      .tabs {
+        display: grid;
+        grid-template-columns: repeat(5, 1fr);
+        padding: 0 8px 10px;
+        border-bottom: 1px solid rgba(117, 152, 206, 0.16);
+      }
+
+      .tab {
+        position: relative;
+        border: 0;
+        background: transparent;
+        color: #7585a7;
+        padding: 14px 0 12px;
+        font-size: 16px;
+        cursor: pointer;
+      }
+
+      .tab.is-active {
+        color: var(--cyan);
+        font-weight: 700;
+      }
+
+      .tab.is-active::after {
+        content: "";
+        position: absolute;
+        left: 26%;
+        right: 26%;
+        bottom: 0;
+        height: 3px;
+        border-radius: 999px;
+        background: var(--cyan);
+        box-shadow: 0 0 12px rgba(2, 215, 228, 0.72);
+      }
+
+      .content {
+        padding: 16px 12px 30px;
+      }
+
+      .meta-row {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin: 4px 4px 14px;
+        color: var(--muted);
+        font-size: 14px;
+      }
+
+      .user-card {
+        margin-bottom: 16px;
+        padding: 15px 16px 14px;
+        border: 1px solid var(--line);
+        background: rgba(16, 42, 81, 0.74);
+        box-shadow: inset 0 0 28px rgba(30, 99, 164, 0.12);
+      }
+
+      .user-name {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        margin-bottom: 12px;
+        font-size: 18px;
+      }
+
+      .male { color: #6fa8ff; font-weight: 800; }
+
+      .user-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        color: var(--muted);
+        font-size: 15px;
+      }
+
+      .section-head {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin: 18px 4px 10px;
+      }
+
+      .section-head h2 {
+        margin: 0;
+        font-size: 20px;
+        line-height: 1.2;
+        font-weight: 850;
+      }
+
+      .measure-mode-toggle {
+        display: inline-flex;
+        align-items: center;
+        gap: 4px;
+        margin: 0 4px 10px;
+        padding: 4px;
+        border: 1px solid rgba(2, 215, 228, 0.28);
+        border-radius: 999px;
+        background: rgba(2, 215, 228, 0.07);
+        box-shadow: inset 0 0 18px rgba(2, 215, 228, 0.06);
+      }
+
+      .measure-mode-toggle button {
+        min-width: 86px;
+        height: 30px;
+        border: 0;
+        border-radius: 999px;
+        color: #9fb4d1;
+        background: transparent;
+        font-size: 14px;
+        font-weight: 750;
+        cursor: pointer;
+      }
+
+      .measure-mode-toggle button.is-active {
+        color: #071426;
+        background: var(--cyan);
+        box-shadow: 0 0 16px rgba(2, 215, 228, 0.36);
+      }
+
+      .module-title {
+        position: relative;
+        display: inline-flex;
+        align-items: center;
+        min-width: auto;
+        height: 26px;
+        margin: 18px 0 8px;
+        padding: 0 0 0 13px;
+        color: #f3f8ff;
+        background: transparent;
+        font-size: 18px;
+        line-height: 1.2;
+        font-weight: 850;
+        clip-path: none;
+      }
+
+      .module-title::before {
+        content: "";
+        position: absolute;
+        left: 0;
+        top: 3px;
+        bottom: 3px;
+        width: 3px;
+        border-radius: 999px;
+        background: var(--cyan);
+        box-shadow: 0 0 12px rgba(2, 215, 228, 0.52);
+      }
+
+      .module-title + .overall-card,
+      .module-title + .data-list {
+        margin-top: 0;
+      }
+
+      .data-note {
+        margin: -4px 4px 8px;
+        color: var(--muted);
+        font-size: 12px;
+        text-align: right;
+      }
+
+      .section-note {
+        color: var(--muted);
+        font-size: 12px;
+      }
+
+      .view-toggle {
+        display: inline-flex;
+        align-items: center;
+        gap: 16px;
+      }
+
+      .view-toggle button {
+        position: relative;
+        border: 0;
+        padding: 4px 0 7px;
+        color: var(--muted);
+        background: transparent;
+        font-size: 16px;
+        line-height: 1.15;
+        cursor: pointer;
+      }
+
+      .view-toggle button.is-active {
+        color: var(--cyan);
+        font-weight: 750;
+      }
+
+      .view-toggle button.is-active::after {
+        content: "";
+        position: absolute;
+        left: 2px;
+        right: 2px;
+        bottom: 0;
+        height: 2px;
+        border-radius: 999px;
+        background: var(--cyan);
+        box-shadow: 0 0 10px rgba(2, 215, 228, 0.42);
+      }
+
+      .compare-card {
+        position: relative;
+        border: 1px solid rgba(80, 164, 224, 0.42);
+        border-radius: 2px;
+        background:
+          radial-gradient(circle at 50% 42%, rgba(2, 215, 228, 0.12), transparent 38%),
+          linear-gradient(180deg, rgba(18, 44, 82, 0.88), rgba(10, 20, 42, 0.92));
+        box-shadow: inset 0 0 34px rgba(40, 120, 205, 0.12), 0 18px 42px rgba(0, 0, 0, 0.18);
+        overflow: hidden;
+      }
+
+      .compare-card::before {
+        content: "";
+        position: absolute;
+        inset: 0;
+        background:
+          linear-gradient(rgba(120, 174, 230, 0.055) 1px, transparent 1px),
+          linear-gradient(90deg, rgba(120, 174, 230, 0.045) 1px, transparent 1px);
+        background-size: 22px 22px;
+        opacity: 0.32;
+        pointer-events: none;
+      }
+
+      .compare-card.is-first .compare-top {
+        grid-template-columns: 1fr 136px 1fr;
+      }
+
+      .compare-card.is-first .compare-top > span:first-child {
+        visibility: hidden;
+      }
+
+      .compare-top {
+        position: relative;
+        z-index: 20;
+        display: grid;
+        grid-template-columns: 1fr 136px 1fr;
+        align-items: center;
+        padding: 12px 12px 4px;
+        color: var(--muted);
+        font-size: 13px;
+      }
+
+      .compare-top > span:last-child {
+        text-align: right;
+      }
+
+      .compare-time {
+        position: relative;
+        display: inline-flex;
+        align-items: center;
+        min-height: 28px;
+        color: #9db8e2;
+        font-size: 12px;
+        line-height: 1.2;
+        white-space: nowrap;
+      }
+
+      .compare-time:last-child {
+        justify-content: flex-end;
+      }
+
+      .compare-time button {
+        border: 0;
+        padding: 0;
+        color: var(--cyan);
+        background: transparent;
+        font: inherit;
+        font-weight: 700;
+        cursor: pointer;
+      }
+
+      .compare-time button::after {
+        content: "⌄";
+        margin-left: 5px;
+        font-size: 10px;
+      }
+
+      .region-picker {
+        position: relative;
+        display: flex;
+        justify-content: center;
+      }
+
+      .region-current {
+        min-width: 96px;
+        height: 34px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 6px;
+        border: 1px solid rgba(2, 215, 228, 0.42);
+        border-radius: 12px;
+        color: var(--cyan);
+        background: linear-gradient(180deg, rgba(2, 215, 228, 0.16), rgba(2, 215, 228, 0.06));
+        font-size: 14px;
+        line-height: 1;
+        font-weight: 750;
+        cursor: pointer;
+        box-shadow: inset 0 0 18px rgba(2, 215, 228, 0.1), 0 8px 20px rgba(0, 0, 0, 0.16);
+      }
+
+      .region-current::before {
+        content: "";
+        width: 4px;
+        height: 16px;
+        border-radius: 99px;
+        background: var(--cyan);
+        box-shadow: 0 0 10px rgba(2, 215, 228, 0.48);
+      }
+
+      .region-current .chevron {
+        color: #86dfff;
+        font-size: 11px;
+        transition: transform 0.18s ease;
+      }
+
+      .region-picker.is-open .region-current .chevron {
+        transform: rotate(180deg);
+      }
+
+      .region-menu {
+        position: absolute;
+        top: 42px;
+        left: 50%;
+        z-index: 30;
+        min-width: 132px;
+        padding: 6px;
+        border: 1px solid rgba(80, 164, 224, 0.38);
+        border-radius: 14px;
+        background: rgba(9, 28, 58, 0.98);
+        box-shadow: 0 18px 36px rgba(0, 0, 0, 0.32);
+        transform: translateX(-50%) translateY(-4px);
+        opacity: 0;
+        pointer-events: none;
+        transition: opacity 0.18s ease, transform 0.18s ease;
+      }
+
+      .region-picker.is-open .region-menu {
+        opacity: 1;
+        pointer-events: auto;
+        transform: translateX(-50%) translateY(0);
+      }
+
+      .region-option {
+        width: 100%;
+        height: 34px;
+        border: 0;
+        border-radius: 10px;
+        color: #aebfda;
+        background: transparent;
+        font-size: 13px;
+        cursor: pointer;
+      }
+
+      .region-option.is-active {
+        text-align: center;
+        color: var(--cyan);
+        background: rgba(2, 215, 228, 0.12);
+        font-weight: 750;
+      }
+
+      .visual-compare {
+        position: relative;
+        z-index: 1;
+        display: grid;
+        grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+        gap: 18px;
+        align-items: center;
+        min-height: 382px;
+        padding: 8px 12px 16px;
+      }
+
+      .compare-card.is-first .visual-compare {
+        grid-template-columns: minmax(0, 1fr);
+        min-height: 420px;
+        padding: 8px 18px 18px;
+      }
+
+      .compare-card.is-first .thermal-pane.previous {
+        display: none;
+      }
+
+      .compare-card.is-first .thermal-pane.current {
+        height: 390px;
+      }
+
+      .compare-card.is-first .thermal-pane.current .heatmap-frame {
+        height: 348px;
+      }
+
+      .compare-card.is-first .thermal-pane.current .heatmap-img {
+        width: min(74%, 210px);
+      }
+
+      .thermal-pane {
+        min-width: 0;
+        height: 354px;
+        display: grid;
+        grid-template-rows: 1fr auto;
+        align-items: end;
+        justify-items: center;
+        position: relative;
+      }
+
+      .thermal-pane.previous {
+        filter: saturate(0.72);
+        opacity: 0.84;
+      }
+
+      .heatmap-frame {
+        position: relative;
+        width: 100%;
+        height: 318px;
+        display: grid;
+        place-items: center;
+        overflow: hidden;
+        border-radius: 22px;
+        background: radial-gradient(ellipse at 50% 45%, rgba(255,255,255,0.08), transparent 58%);
+        cursor: grab;
+        touch-action: none;
+        user-select: none;
+      }
+
+      .heatmap-frame.is-dragging {
+        cursor: grabbing;
+      }
+
+      .h5-compare-stage[data-view="front"] .back-only,
+      .h5-compare-stage[data-view="back"] .front-only {
+        display: none;
+      }
+
+      .pane-date {
+        position: relative;
+        z-index: 12;
+        width: 100%;
+        min-height: 30px;
+        margin-top: 8px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: #a8b8d3;
+        font-size: 12px;
+        line-height: 1.2;
+        background: linear-gradient(180deg, rgba(9, 20, 43, 0), rgba(9, 20, 43, 0.88) 42%, rgba(9, 20, 43, 0.96));
+      }
+
+      .pane-date button {
+        border: 1px solid rgba(2, 215, 228, 0.42);
+        border-radius: 999px;
+        padding: 6px 9px;
+        color: var(--cyan);
+        background: rgba(2, 215, 228, 0.11);
+        font: inherit;
+        font-size: 12px;
+        font-weight: 750;
+        line-height: 1;
+        white-space: nowrap;
+        cursor: pointer;
+      }
+
+      .pane-date button::after {
+        content: "⌄";
+        margin-left: 6px;
+        color: var(--cyan);
+        font-size: 11px;
+      }
+
+      .pane-date.is-hidden {
+        display: none;
+      }
+
+      .focus-panel {
+        position: absolute;
+        left: 50%;
+        top: 51%;
+        z-index: 18;
+        width: 88px;
+        min-height: 82px;
+        display: grid;
+        align-content: center;
+        gap: 5px;
+        padding: 10px 8px 9px;
+        border: 1px solid rgba(2, 215, 228, 0.48);
+        border-radius: 999px;
+        background:
+          linear-gradient(180deg, rgba(11, 38, 72, 0.82), rgba(6, 17, 36, 0.9));
+        box-shadow: inset 0 0 18px rgba(2, 215, 228, 0.12), 0 12px 26px rgba(0, 0, 0, 0.24);
+        text-align: center;
+        transform: translate(-50%, -50%);
+        pointer-events: auto;
+        backdrop-filter: blur(10px);
+        cursor: pointer;
+        transition: border-color 0.18s ease, box-shadow 0.18s ease, transform 0.18s ease;
+      }
+
+      .focus-panel:hover,
+      .focus-panel:focus-visible {
+        border-color: rgba(2, 215, 228, 0.78);
+        box-shadow: inset 0 0 20px rgba(2, 215, 228, 0.16), 0 16px 30px rgba(0, 0, 0, 0.3);
+      }
+
+      .focus-panel::before,
+      .focus-panel::after {
+        content: "";
+        position: absolute;
+        top: 50%;
+        width: 24px;
+        height: 1px;
+        background: linear-gradient(90deg, transparent, rgba(2, 215, 228, 0.56));
+      }
+
+      .focus-panel::before {
+        right: 100%;
+        transform: translateY(-50%);
+      }
+
+      .focus-panel::after {
+        left: 100%;
+        transform: translateY(-50%) rotate(180deg);
+      }
+
+      .compare-card.is-first .focus-panel {
+        left: auto;
+        right: 18px;
+        top: 42%;
+        width: 92px;
+        min-height: 80px;
+        transform: translateY(-50%);
+      }
+
+      .compare-card.is-first .focus-panel::before,
+      .compare-card.is-first .focus-panel::after {
+        display: none;
+      }
+
+      .focus-kicker {
+        display: none;
+      }
+
+      .focus-panel > strong {
+        display: none;
+      }
+
+      .focus-temp {
+        display: grid;
+        gap: 3px;
+        padding: 0;
+      }
+
+      .focus-temp b {
+        color: #ff7070;
+        font-size: 20px;
+        line-height: 1;
+      }
+
+      .focus-temp b.down { color: #6aa1ff; }
+      .focus-temp b.flat { color: var(--green); }
+      .focus-temp b.mean { color: var(--cyan); }
+
+      .focus-temp span {
+        color: #b9d6ef;
+        font-size: 11px;
+        line-height: 1.15;
+        white-space: nowrap;
+      }
+
+      .focus-insight {
+        margin: 2px 0 4px;
+        color: #c8d9ef;
+        font-size: 12px;
+        line-height: 1.55;
+      }
+
+      .focus-detail-btn {
+        height: 32px;
+        border: 1px solid rgba(2, 215, 228, 0.36);
+        border-radius: 999px;
+        color: var(--cyan);
+        background: rgba(2, 215, 228, 0.08);
+        cursor: pointer;
+      }
+
+      .heat-slider {
+        --split: 50%;
+        position: relative;
+        height: 50vh;
+        min-height: 330px;
+        max-height: 430px;
+        border: 1px solid rgba(80, 164, 224, 0.28);
+        background: radial-gradient(circle at 50% 38%, rgba(17, 55, 96, 0.42), rgba(3, 13, 30, 0.08) 62%);
+        overflow: hidden;
+      }
+
+      .heat-layer {
+        position: absolute;
+        inset: 0;
+        display: grid;
+        place-items: center;
+      }
+
+      .heat-layer.last {
+        z-index: 2;
+        clip-path: inset(0 calc(100% - var(--split)) 0 0);
+        filter: grayscale(0.72) saturate(0.72);
+        opacity: 0.88;
+      }
+
+      .heatmap-img {
+        width: min(72%, 220px);
+        height: 92%;
+        object-fit: contain;
+        pointer-events: none;
+        filter: drop-shadow(0 16px 28px rgba(0,0,0,.28));
+      }
+
+      .heatmap-frame .heatmap-img {
+        width: min(100%, 154px);
+        height: 100%;
+        transform: translate(var(--pan-x, 0px), var(--pan-y, 0px)) scale(var(--zoom, 1));
+        transform-origin: center;
+        transition: transform 0.08s ease;
+      }
+
+      .heat-label {
+        position: absolute;
+        top: 12px;
+        z-index: 8;
+        color: #a7b9d8;
+        font-size: 13px;
+      }
+
+      .heat-label.left { left: 12px; }
+      .heat-label.right { right: 12px; }
+
+      .heat-divider {
+        position: absolute;
+        z-index: 7;
+        top: 0;
+        bottom: 0;
+        left: var(--split);
+        width: 2px;
+        transform: translateX(-1px);
+        background: rgba(2, 215, 228, 0.84);
+        box-shadow: 0 0 18px rgba(2, 215, 228, 0.42);
+      }
+
+      .heat-handle {
+        position: absolute;
+        z-index: 9;
+        left: var(--split);
+        top: 50%;
+        width: 38px;
+        height: 38px;
+        transform: translate(-50%, -50%);
+        border: 1px solid rgba(2, 215, 228, 0.72);
+        border-radius: 50%;
+        background: rgba(12, 33, 66, 0.88);
+        color: var(--cyan);
+        display: grid;
+        place-items: center;
+        font-weight: 900;
+        cursor: ew-resize;
+        box-shadow: 0 8px 22px rgba(0,0,0,.34);
+      }
+
+      .heat-range {
+        position: absolute;
+        z-index: 10;
+        left: 16px;
+        right: 16px;
+        bottom: 12px;
+        width: calc(100% - 32px);
+        accent-color: var(--cyan);
+      }
+
+      .fullscreen-btn {
+        position: absolute;
+        z-index: 11;
+        right: 12px;
+        bottom: 42px;
+        width: 34px;
+        height: 34px;
+        border: 1px solid rgba(2, 215, 228, 0.48);
+        border-radius: 8px;
+        color: var(--cyan);
+        background: rgba(4, 22, 48, 0.74);
+        cursor: pointer;
+      }
+
+      .slider-roi-zone {
+        position: absolute;
+        z-index: 6;
+        border: 1px solid transparent;
+        border-radius: 999px;
+        background: transparent;
+      }
+
+      .slider-roi-zone.is-active {
+        border-color: rgba(2, 215, 228, 0.95);
+        background: rgba(2, 215, 228, 0.08);
+        box-shadow: 0 0 16px rgba(2, 215, 228, 0.42);
+      }
+
+      .heatmap-frame .slider-roi-zone.is-active {
+        background: rgba(2, 215, 228, 0.07);
+        box-shadow: 0 0 14px rgba(2, 215, 228, 0.34);
+      }
+
+      .roi-neck { left: 34%; top: 18%; width: 32%; height: 12%; }
+      .roi-chest { left: 30%; top: 31%; width: 40%; height: 13%; }
+      .roi-abdomen { left: 32%; top: 45%; width: 36%; height: 15%; }
+      .roi-waist { left: 32%; top: 44%; width: 36%; height: 13%; }
+      .roi-spine { left: 46%; top: 28%; width: 8%; height: 32%; }
+      .roi-hip { left: 31%; top: 58%; width: 38%; height: 13%; }
+
+      .heat-slider[data-view="front"] .back-only,
+      .heat-slider[data-view="back"] .front-only {
+        display: none;
+      }
+
+      .temperature-scale {
+        align-self: center;
+        display: grid;
+        grid-template-columns: 12px 1fr;
+        align-items: stretch;
+        gap: 5px;
+        height: 214px;
+        color: var(--muted);
+        font-size: 10px;
+      }
+
+      .temperature-bar {
+        border-radius: 999px;
+        background: linear-gradient(180deg, #a00000 0%, #ff2a00 12%, #ffb000 30%, #e8f700 45%, #35d15f 60%, #13b7d7 76%, #2847c7 100%);
+        box-shadow: inset 0 0 0 1px rgba(255,255,255,0.16);
+      }
+
+      .temperature-ticks {
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        line-height: 1;
+        white-space: nowrap;
+      }
+
+      .selected-mini {
+        display: grid;
+        grid-template-columns: 1fr auto;
+        gap: 8px;
+        align-items: center;
+        margin: 8px 10px 12px;
+        padding: 10px 12px;
+        border: 1px solid rgba(80, 164, 224, 0.28);
+        background: rgba(6, 22, 48, 0.62);
+      }
+
+      .selected-mini strong {
+        color: var(--cyan);
+        font-size: 16px;
+      }
+
+      .selected-mini span {
+        color: var(--muted);
+        font-size: 12px;
+      }
+
+      .selected-mini b {
+        color: #f3f8ff;
+      }
+
+      .bubble {
+        width: 126px;
+        min-height: 132px;
+        display: grid;
+        align-content: center;
+        gap: 12px;
+        padding: 14px 12px;
+        border: 1px solid rgba(2, 215, 228, 0.42);
+        border-radius: 8px;
+        background: linear-gradient(180deg, rgba(6, 28, 55, 0.82), rgba(6, 17, 36, 0.88));
+        box-shadow: 0 12px 28px rgba(0, 0, 0, 0.18);
+        text-align: center;
+      }
+
+      .bubble strong {
+        display: block;
+        color: var(--cyan);
+        font-size: 24px;
+        line-height: 1.2;
+      }
+
+      .bubble span {
+        display: block;
+        margin-top: 3px;
+        color: var(--muted);
+        font-size: 12px;
+      }
+
+      .bubble-change {
+        display: grid;
+        grid-template-columns: 1fr auto;
+        align-items: center;
+        gap: 6px;
+        padding: 8px 10px;
+        border: 1px solid rgba(79, 158, 255, 0.2);
+        border-radius: 6px;
+        background: rgba(7, 18, 38, 0.34);
+        color: var(--muted);
+        font-size: 11px;
+      }
+
+      .bubble-change strong {
+        color: var(--text);
+        font-size: 13px;
+      }
+
+      .change-up { color: #ff7373; }
+      .change-down { color: #5f9cff; }
+      .change-flat { color: var(--green); }
+
+      .overall-card {
+        width: 100%;
+        display: grid;
+        gap: 0;
+        margin-top: 12px;
+        padding: 0;
+        border: 1px solid rgba(80, 164, 224, 0.36);
+        border-radius: 10px;
+        color: inherit;
+        background: linear-gradient(180deg, rgba(18, 44, 82, 0.78), rgba(10, 22, 44, 0.88));
+        text-align: left;
+        overflow: hidden;
+      }
+
+      .overall-card strong {
+        display: block;
+        margin-bottom: 5px;
+        color: #f2f8ff;
+        font-size: 16px;
+      }
+
+      .overall-card p {
+        margin: 0;
+        color: #aebfda;
+        font-size: 15px;
+        line-height: 1.65;
+      }
+
+      .overall-row {
+        display: grid;
+        grid-template-columns: 82px minmax(0, 1fr);
+        border-bottom: 1px solid rgba(92, 142, 199, 0.18);
+      }
+
+      .overall-row:last-child {
+        border-bottom: 0;
+      }
+
+      .overall-row strong {
+        display: flex;
+        align-items: center;
+        padding: 12px 12px;
+        margin: 0;
+        color: #f4f8ff;
+        font-size: 14px;
+        line-height: 1.45;
+        background: rgba(42, 78, 124, 0.28);
+      }
+
+      .overall-row span {
+        padding: 12px 12px;
+        color: #b8c9e2;
+        font-size: 14px;
+        line-height: 1.55;
+        overflow-wrap: anywhere;
+      }
+
+      .history-panel {
+        position: absolute;
+        left: 50%;
+        top: calc(100% + 8px);
+        bottom: auto;
+        z-index: 35;
+        display: none;
+        gap: 8px;
+        width: 172px;
+        padding: 8px;
+        border: 1px solid rgba(86, 151, 210, 0.32);
+        border-radius: 12px;
+        background: rgba(8, 25, 54, 0.98);
+        box-shadow: 0 18px 36px rgba(0,0,0,0.34);
+        transform: translateX(-50%);
+      }
+
+      .history-panel.is-open {
+        display: grid;
+      }
+
+      .history-option {
+        display: flex;
+        justify-content: space-between;
+        gap: 8px;
+        border: 1px solid rgba(2, 215, 228, 0.26);
+        border-radius: 8px;
+        background: rgba(2, 215, 228, 0.08);
+        color: #c9f7ff;
+        padding: 8px;
+        font-size: 11px;
+        cursor: pointer;
+      }
+
+      .data-list {
+        display: grid;
+        gap: 0;
+        border: 1px solid rgba(80, 164, 224, 0.28);
+        border-radius: 10px;
+        background: linear-gradient(180deg, rgba(17, 40, 78, 0.62), rgba(9, 23, 49, 0.74));
+        box-shadow: inset 0 0 28px rgba(2, 215, 228, 0.04);
+        overflow: hidden;
+      }
+
+      .metric-card {
+        width: 100%;
+        position: relative;
+        border: 0;
+        border-bottom: 1px solid rgba(92, 142, 199, 0.18);
+        border-radius: 0;
+        color: inherit;
+        background: transparent;
+        padding: 0;
+        text-align: left;
+        cursor: pointer;
+        overflow: hidden;
+      }
+
+      .metric-card:last-child {
+        border-bottom: 0;
+      }
+
+      .metric-card.is-active {
+        background: linear-gradient(90deg, rgba(2, 215, 228, 0.12), rgba(14, 58, 86, 0.08), transparent);
+        box-shadow: none;
+      }
+
+      .metric-card.is-active::before {
+        content: "";
+        position: absolute;
+        left: 0;
+        top: 14px;
+        bottom: 14px;
+        width: 3px;
+        border-radius: 999px;
+        background: var(--cyan);
+        box-shadow: 0 0 14px rgba(2, 215, 228, 0.52);
+      }
+
+      .metric-compare {
+        display: grid;
+        grid-template-columns: minmax(0, 1fr) auto 18px;
+        align-items: center;
+        min-height: 62px;
+        gap: 10px;
+        padding: 0 12px 0 14px;
+      }
+
+      .metric-side {
+        display: grid;
+        min-width: 0;
+        gap: 4px;
+      }
+
+      .data-list .metric-name {
+        display: inline-flex;
+        align-items: center;
+        color: #9fb4d1;
+        font-size: 14px !important;
+        line-height: 1.25;
+        font-weight: 650;
+      }
+
+      .metric-label {
+        display: flex;
+        align-items: baseline;
+        gap: 8px;
+        min-width: 0;
+      }
+
+      .metric-label small {
+        color: #6f86a9;
+        font-size: 11px;
+        font-weight: 500;
+        white-space: nowrap;
+      }
+
+      .data-list .metric-side b {
+        color: #eef7ff;
+        font-size: 14px !important;
+        font-weight: 650;
+        line-height: 1.25;
+        overflow-wrap: anywhere;
+      }
+
+      .metric-side span {
+        color: var(--muted);
+        font-size: 11px;
+      }
+
+      .metric-center {
+        display: grid;
+        justify-items: end;
+        gap: 4px;
+        min-width: 0;
+      }
+
+      .metric-level {
+        color: #8298ba;
+        font-size: 11px;
+        line-height: 1;
+        white-space: nowrap;
+      }
+
+      .metric-change {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        min-width: 64px;
+        min-height: 28px;
+        border-radius: 999px;
+        background: rgba(255, 112, 112, 0.13);
+        color: #ff7d7d;
+        font-weight: 800;
+        font-size: 14px;
+        line-height: 1;
+        white-space: nowrap;
+      }
+
+      .metric-change.down {
+        color: #6aa1ff;
+        background: rgba(106, 161, 255, 0.16);
+      }
+
+      .metric-change.flat {
+        color: var(--green);
+        background: rgba(45, 204, 131, 0.16);
+      }
+
+      .metric-arrow {
+        color: rgba(154, 182, 224, 0.62);
+        font-size: 20px;
+        line-height: 1;
+        align-self: center;
+        transition: transform 0.16s ease, color 0.16s ease;
+      }
+
+      .metric-card.is-active .metric-arrow {
+        color: var(--cyan);
+      }
+
+      .metric-card:active .metric-arrow,
+      .metric-card:hover .metric-arrow {
+        transform: translateX(2px);
+      }
+
+      .metric-compare.is-first {
+        grid-template-columns: minmax(0, 1fr) auto 18px;
+      }
+
+      .metric-compare.is-first .metric-change {
+        justify-self: end;
+        min-width: 74px;
+        color: var(--cyan);
+        background: rgba(2, 215, 228, 0.12);
+      }
+
+      .up { color: #ff7070; }
+      .down { color: #6aa1ff; }
+      .flat { color: var(--green); }
+
+      .summary {
+        border: 1px solid rgba(76, 168, 232, 0.82);
+        background: linear-gradient(180deg, rgba(17, 43, 82, 0.9), rgba(15, 34, 66, 0.84));
+        padding: 16px 14px;
+      }
+
+      .summary-item {
+        display: flex;
+        gap: 12px;
+        padding: 0 0 15px;
+        margin-bottom: 15px;
+        border-bottom: 1px solid rgba(117, 152, 206, 0.22);
+      }
+
+      .summary-item:last-child {
+        padding-bottom: 0;
+        margin-bottom: 0;
+        border-bottom: 0;
+      }
+
+      .summary-icon {
+        flex: 0 0 26px;
+        width: 26px;
+        height: 26px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        color: var(--cyan);
+        border: 1px solid rgba(0, 224, 255, 0.42);
+        border-radius: 50%;
+        background: rgba(0, 224, 255, 0.08);
+        font-size: 14px;
+        font-weight: 900;
+      }
+
+      .summary-icon.warn {
+        color: #ff626f;
+        border-color: rgba(255, 98, 111, 0.48);
+        background: rgba(255, 98, 111, 0.1);
+      }
+
+      .summary-copy {
+        flex: 1;
+        min-width: 0;
+      }
+
+      .summary-title {
+        margin: 0;
+        color: #f4f9ff;
+        font-size: 15px;
+        font-weight: 900;
+      }
+
+      .summary-title.warn {
+        color: #ff626f;
+      }
+
+      .summary-text {
+        margin: 8px 0 0;
+        color: #aebfda;
+        line-height: 1.72;
+        font-size: 13px;
+      }
+
+      .tip {
+        margin-top: 16px;
+        border: 1px solid rgba(117, 152, 206, 0.22);
+        background: rgba(255, 255, 255, 0.04);
+        color: #aab8d0;
+        padding: 12px;
+        line-height: 1.7;
+        font-size: 13px;
+        overflow-wrap: anywhere;
+      }
+
+      .medical-note {
+        margin-top: 10px;
+        color: #7f90ad;
+        font-size: 12px;
+        line-height: 1.65;
+        overflow-wrap: anywhere;
+      }
+
+      .toast {
+        position: fixed;
+        left: 50%;
+        bottom: 24px;
+        z-index: 40;
+        width: max-content;
+        max-width: calc(100vw - 40px);
+        padding: 10px 14px;
+        border-radius: 999px;
+        color: #071c2a;
+        background: var(--cyan);
+        box-shadow: 0 12px 30px rgba(2, 215, 228, 0.25);
+        opacity: 0;
+        pointer-events: none;
+        transform: translateX(-50%) translateY(20px);
+        transition: opacity 0.2s ease, transform 0.2s ease;
+        font-size: 14px;
+        font-weight: 700;
+      }
+
+      .toast.show {
+        opacity: 1;
+        transform: translateX(-50%) translateY(0);
+      }
+
+      .sheet-mask {
+        position: fixed;
+        inset: 0;
+        z-index: 50;
+        display: none;
+        background: rgba(1, 8, 18, 0.62);
+      }
+
+      .sheet-mask.is-open { display: block; }
+
+      .roi-sheet {
+        position: fixed;
+        left: 50%;
+        bottom: 0;
+        z-index: 51;
+        width: min(100%, 420px);
+        max-height: 88vh;
+        overflow-y: auto;
+        padding: 18px 18px 22px;
+        border: 1px solid rgba(80, 160, 220, 0.42);
+        border-bottom: 0;
+        background: linear-gradient(180deg, #172b50, #10172c);
+        box-shadow: 0 -20px 48px rgba(0, 0, 0, 0.38);
+        transform: translateX(-50%) translateY(110%);
+        transition: transform 0.22s ease;
+      }
+
+      .roi-sheet.is-open { transform: translateX(-50%) translateY(0); }
+
+      .sheet-head {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 12px;
+        margin-bottom: 12px;
+      }
+
+      .sheet-head strong {
+        color: var(--cyan);
+        font-size: 18px;
+      }
+
+      .sheet-close {
+        width: 32px;
+        height: 32px;
+        border: 1px solid rgba(117, 152, 206, 0.32);
+        border-radius: 50%;
+        color: #cfe5ff;
+        background: rgba(255, 255, 255, 0.06);
+        cursor: pointer;
+      }
+
+      .sheet-body {
+        margin: 0 0 12px;
+        color: #d7e5f8;
+        line-height: 1.7;
+        font-size: 15px;
+      }
+
+      .detail-compare {
+        display: grid;
+        grid-template-columns: 1fr 78px 1fr;
+        align-items: center;
+        gap: 8px;
+        margin-bottom: 12px;
+        padding: 12px;
+        border: 1px solid rgba(80, 164, 224, 0.24);
+        border-radius: 8px;
+        background: rgba(255, 255, 255, 0.035);
+        text-align: center;
+      }
+
+      .detail-compare b {
+        display: block;
+        color: var(--cyan);
+        font-size: 22px;
+        line-height: 1.1;
+      }
+
+      .detail-compare span {
+        color: var(--muted);
+        font-size: 12px;
+      }
+
+      .detail-change {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        min-height: 28px;
+        border-radius: 999px;
+        background: rgba(255, 112, 112, 0.16);
+        color: #ff7070;
+        font-weight: 800;
+      }
+
+      .detail-change.down {
+        color: #6aa1ff;
+        background: rgba(106, 161, 255, 0.16);
+      }
+
+      .detail-change.flat {
+        color: var(--green);
+        background: rgba(45, 204, 131, 0.16);
+      }
+
+      .detail-grid {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 8px;
+        margin-bottom: 12px;
+      }
+
+      .detail-field {
+        padding: 10px 8px;
+        border: 1px solid rgba(80, 164, 224, 0.2);
+        border-radius: 8px;
+        background: rgba(255, 255, 255, 0.035);
+      }
+
+      .detail-field span {
+        display: block;
+        color: var(--muted);
+        font-size: 12px;
+      }
+
+      .detail-field b {
+        display: block;
+        margin-top: 4px;
+        color: #eef7ff;
+        font-size: 15px;
+      }
+
+      .detail-note {
+        margin: 0;
+        color: #aab8d0;
+        font-size: 13px;
+        line-height: 1.65;
+      }
+
+      .detail-section {
+        margin-top: 12px;
+      }
+
+      .detail-section-title {
+        margin: 0 0 8px;
+        color: #f2f8ff;
+        font-size: 14px;
+        font-weight: 800;
+      }
+
+      .detail-eval {
+        border: 1px solid rgba(80, 164, 224, 0.24);
+        border-radius: 10px;
+        overflow: hidden;
+        background: rgba(255, 255, 255, 0.035);
+      }
+
+      .detail-eval-row {
+        display: grid;
+        grid-template-columns: 82px 1fr;
+        border-bottom: 1px solid rgba(117, 152, 206, 0.22);
+      }
+
+      .detail-eval-row:last-child {
+        border-bottom: 0;
+      }
+
+      .detail-eval-row strong {
+        padding: 10px;
+        color: #eaf6ff;
+        background: rgba(64, 145, 220, 0.16);
+        font-size: 12px;
+      }
+
+      .detail-eval-row span {
+        padding: 10px;
+        color: #d7e5f8;
+        font-size: 12px;
+        line-height: 1.65;
+      }
+
+      .sheet-foot {
+        margin: 0;
+        padding-top: 12px;
+        border-top: 1px dashed rgba(117, 152, 206, 0.32);
+        color: #8fa3c4;
+        line-height: 1.6;
+        font-size: 13px;
+      }
+
+      .fullscreen-viewer {
+        position: fixed;
+        inset: 0;
+        z-index: 80;
+        display: none;
+        grid-template-rows: 58px 1fr;
+        background: #050914;
+      }
+
+      .fullscreen-viewer.is-open {
+        display: grid;
+      }
+
+      .viewer-toolbar {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 0 14px;
+        color: #ddecff;
+        background: rgba(15, 27, 52, 0.96);
+        border-bottom: 1px solid rgba(80, 164, 224, 0.22);
+      }
+
+      .viewer-toolbar button {
+        border: 1px solid rgba(80, 164, 224, 0.34);
+        border-radius: 8px;
+        background: rgba(255,255,255,.04);
+        color: #ddecff;
+        padding: 8px 10px;
+      }
+
+      .viewer-stage {
+        position: relative;
+        overflow: hidden;
+        touch-action: none;
+      }
+
+      .viewer-transform {
+        position: absolute;
+        inset: 0;
+        display: grid;
+        place-items: center;
+        transform-origin: center;
+      }
+
+      .viewer-transform .heat-slider {
+        width: min(92vw, 520px);
+        height: 82vh;
+        max-height: none;
+      }
+
+      .viewer-hint {
+        position: absolute;
+        left: 50%;
+        bottom: 18px;
+        transform: translateX(-50%);
+        padding: 8px 12px;
+        border-radius: 999px;
+        background: rgba(8, 18, 38, 0.78);
+        color: #aebfda;
+        font-size: 12px;
+      }
+
+      @media (max-width: 360px) {
+        .section-head h2 {
+          font-size: 19px;
+        }
+        .module-title {
+          font-size: 17px;
+        }
+        .visual-compare {
+          grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+          gap: 12px;
+          padding-left: 6px;
+          padding-right: 6px;
+          min-height: 350px;
+        }
+        .thermal-pane {
+          height: 320px;
+        }
+        .heatmap-frame {
+          height: 286px;
+        }
+        .heatmap-frame .heatmap-img {
+          width: min(100%, 136px);
+        }
+        .focus-panel {
+          width: 78px;
+          min-height: 72px;
+          padding: 8px 6px;
+        }
+        .focus-temp b {
+          font-size: 18px;
+        }
+        .focus-insight {
+          font-size: 11px;
+        }
+        .heat-slider {
+          min-height: 310px;
+        }
+        .metric-compare {
+          grid-template-columns: 50px minmax(0, 1fr) auto 16px;
+          min-height: 58px;
+          gap: 8px;
+          padding: 0 10px 0 12px;
+        }
+        .data-list .metric-name,
+        .data-list .metric-side b { font-size: 14px !important; }
+        .metric-change { min-width: 58px; font-size: 14px; }
+        .detail-grid { grid-template-columns: repeat(2, 1fr); }
+      }
+    </style>
+  </head>
+  <body>
+    <main class="phone">
+      <div class="statusbar"><span>中国电信</span><span>11:54</span><span>100%</span></div>
+      <header class="app-title">
+        <span></span>
+        <strong>Visbody</strong>
+        <button class="icon-btn" data-toast="更多操作">⋯</button>
+      </header>
+
+      <div class="top-actions">
+        <button class="icon-btn" data-toast="返回上一页">←</button>
+        <button class="icon-btn" data-toast="查看历史记录">↺</button>
+      </div>
+
+      <nav class="tabs" aria-label="测量项目">
+        <button class="tab" data-toast="体成分页示意">体成分</button>
+        <button class="tab" data-toast="体态页示意">体态</button>
+        <button class="tab" data-toast="体围页示意">体围</button>
+        <button class="tab" data-toast="肩部页示意">肩部</button>
+        <button class="tab is-active">红外</button>
+      </nav>
+
+      <section class="content">
+        <div class="meta-row">
+          <span>2026/06/03&nbsp;&nbsp;19:24</span>
+          <button class="icon-btn" data-toast="报告分享入口">⇪</button>
+        </div>
+
+        <section class="user-card">
+          <div class="user-name"><span>谭先生（奕晨）</span><span class="male">♂</span></div>
+          <div class="user-grid">
+            <span>身高：180 cm</span>
+            <span>年龄：35岁</span>
+          </div>
+        </section>
+
+        <div class="measure-mode-toggle" aria-label="测量状态切换">
+          <button class="is-active" data-measure-mode="first" type="button">首次测量</button>
+          <button data-measure-mode="repeat" type="button">再次测量</button>
+        </div>
+
+        <div class="section-head">
+          <h2 id="sectionTitle">热成像对比</h2>
+          <div class="view-toggle" aria-label="热图视角切换">
+            <button class="is-active" data-view="front" type="button">正面</button>
+            <button data-view="back" type="button">背面</button>
+          </div>
+        </div>
+
+        <section class="compare-card" id="compareCard">
+          <div class="compare-top">
+            <span class="compare-time" id="leftCompareLabel">
+              <button id="historyToggle" type="button">2026/05/08 18:35:52</button>
+              <div class="history-panel" id="historyPanel">
+                <button class="history-option" data-history="2026/05/08 18:35:52" type="button"><span>2026/05/08</span><span>18:35:52</span></button>
+                <button class="history-option" data-history="2026/04/22 00:43:59" type="button"><span>2026/04/22</span><span>00:43:59</span></button>
+                <button class="history-option" data-history="2026/03/13 11:29:46" type="button"><span>2026/03/13</span><span>11:29:46</span></button>
+              </div>
+            </span>
+            <div class="region-picker" id="regionPicker">
+              <button class="region-current" id="regionPickerBtn" type="button" aria-haspopup="true" aria-expanded="false">
+                <span id="selectedNameTop">肩颈</span>
+                <span class="chevron" aria-hidden="true">⌄</span>
+              </button>
+              <div class="region-menu" id="regionMenu" role="menu" aria-label="切换部位"></div>
+            </div>
+            <span class="compare-time" id="rightCompareLabel">2026/06/03 19:24:14</span>
+          </div>
+
+          <div class="visual-compare">
+            <div class="thermal-pane previous">
+              <div class="heatmap-frame h5-compare-stage" data-view="front" aria-label="上次红外热图">
+                <img class="heatmap-img" src="thermal-front-reference.png" alt="上次红外热图" />
+                <button class="slider-roi-zone roi-neck" data-region="shoulderNeck" aria-label="肩颈"></button>
+                <button class="slider-roi-zone roi-chest front-only" data-region="chest" aria-label="胸部"></button>
+                <button class="slider-roi-zone roi-abdomen front-only" data-region="abdomen" aria-label="腹部"></button>
+                <button class="slider-roi-zone roi-waist back-only" data-region="waist" aria-label="腰部"></button>
+                <button class="slider-roi-zone roi-spine back-only" data-region="spine" aria-label="脊柱"></button>
+                <button class="slider-roi-zone roi-hip back-only" data-region="hip" aria-label="臀部"></button>
+              </div>
+              <div class="pane-date is-hidden" id="lastCaption"></div>
+            </div>
+
+            <div class="focus-panel" id="focusPanel" role="button" tabindex="0" aria-label="查看当前部位详情">
+              <span class="focus-kicker">当前部位</span>
+              <strong id="selectedNameInline">肩颈</strong>
+              <div class="focus-temp">
+                <b id="inlineChange" class="up">↑0.6℃</b>
+                <span id="inlineLevel">变化较明显</span>
+              </div>
+            </div>
+
+            <div class="thermal-pane current">
+              <div class="heatmap-frame h5-compare-stage" data-view="front" aria-label="本次红外热图">
+                <img class="heatmap-img" src="thermal-front-reference.png" alt="本次红外热图" />
+                <button class="slider-roi-zone roi-neck" data-region="shoulderNeck" aria-label="肩颈"></button>
+                <button class="slider-roi-zone roi-chest front-only" data-region="chest" aria-label="胸部"></button>
+                <button class="slider-roi-zone roi-abdomen front-only" data-region="abdomen" aria-label="腹部"></button>
+                <button class="slider-roi-zone roi-waist back-only" data-region="waist" aria-label="腰部"></button>
+                <button class="slider-roi-zone roi-spine back-only" data-region="spine" aria-label="脊柱"></button>
+                <button class="slider-roi-zone roi-hip back-only" data-region="hip" aria-label="臀部"></button>
+              </div>
+              <div class="pane-date is-hidden" id="currentCaption"></div>
+            </div>
+          </div>
+        </section>
+
+        <div class="module-title">整体评估</div>
+        <section class="overall-card" id="overallCard" aria-label="整体评估">
+          <div class="overall-row"><strong>变化重点</strong><span>肩颈、腰部和腹部较上次变化更明显，其中腰部变化最大，为 ↑0.7℃。</span></div>
+          <div class="overall-row"><strong>分布表现</strong><span>整体热态分布较平稳，肩颈和腰部区域温度相对更高，局部存在轻微温度起伏。</span></div>
+          <div class="overall-row"><strong>左右差异</strong><span>腰部和臀部左右温差相对更明显，可结合站姿、体态习惯和局部受压情况查看。</span></div>
+          <div class="overall-row"><strong>服务提示</strong><span>如相关部位近期体感变化明显，可向门店人员或专业服务人员进一步咨询。</span></div>
+        </section>
+
+        <div class="module-title">热态数据</div>
+
+        <div class="data-list" id="metricBody" aria-label="热态数据"></div>
+
+        <div class="tip">测量提示：隔衣测量会受衣物材质、厚度和遮挡影响；本报告重点用于观察热态分布与前后变化趋势。</div>
+        <div class="tip">复测提示：建议在相同环境、衣着、站位和静止条件下进行阶段性复测。</div>
+        <div class="medical-note">声明：本报告仅用于体表热态变化展示与健康管理沟通参考，不作为医学诊断或治疗依据。</div>
+      </section>
+    </main>
+
+    <div class="toast" id="toast"></div>
+    <div class="sheet-mask" id="sheetMask"></div>
+    <aside class="roi-sheet" id="roiSheet" aria-live="polite">
+      <div class="sheet-head">
+        <strong id="sheetTitle">区域说明</strong>
+        <button class="sheet-close" id="sheetClose" type="button" aria-label="关闭">×</button>
+      </div>
+      <div class="sheet-body" id="sheetBody"></div>
+      <p class="sheet-foot" id="sheetFoot">说明：区域边界为系统计算范围，用于保持每次测量的数据口径一致，不等同于医学解剖边界。</p>
+    </aside>
+
+    <section class="fullscreen-viewer" id="fullscreenViewer" aria-label="全屏红外热图查看">
+      <div class="viewer-toolbar">
+        <strong>红外热态对比</strong>
+        <div>
+          <button id="viewerReset" type="button">复位</button>
+          <button id="viewerClose" type="button">关闭</button>
+        </div>
+      </div>
+      <div class="viewer-stage" id="viewerStage">
+        <div class="viewer-transform" id="viewerTransform">
+          <div class="heat-slider" id="fullscreenHeatSlider" data-view="front" aria-label="全屏红外热态对比">
+            <span class="heat-label left">上次</span>
+            <span class="heat-label right">本次</span>
+            <div class="heat-layer present">
+              <img class="heatmap-img" src="thermal-front-reference.png" alt="本次红外热图" />
+            </div>
+            <div class="heat-layer last">
+              <img class="heatmap-img" src="thermal-front-reference.png" alt="上次红外热图" />
+            </div>
+            <div class="heat-divider"></div>
+            <div class="heat-handle" aria-hidden="true">↔</div>
+            <input class="heat-range" id="fullscreenHeatRange" type="range" min="5" max="95" value="50" aria-label="拖动查看全屏热图对比" />
+          </div>
+        </div>
+        <div class="viewer-hint">滚轮缩放，拖拽移动；移动端可双指缩放</div>
+      </div>
+    </section>
+
+    <script>
+      const metrics = [
+        { key: "shoulderNeck", name: "肩颈", view: ["front", "back"], present: 35.4, last: 34.8, high: 36.2, low: 34.6, change: 0.6, diff: "右高0.2℃", desc: "肩颈区域覆盖颈部下方、双肩上缘及肩颈连接区域，用于观察肩颈部位的体表热态变化。" },
+        { key: "chest", name: "胸部", view: ["front"], present: 35.2, last: 35.1, high: 35.9, low: 34.9, change: 0.1, diff: "右高0.1℃", desc: "胸部区域覆盖躯干正面上半部分的胸前区域，用于观察胸前区域的体表热态变化。" },
+        { key: "abdomen", name: "腹部", view: ["front"], present: 34.7, last: 34.2, high: 35.6, low: 34.1, change: 0.5, diff: "左高0.2℃", desc: "腹部区域覆盖躯干正面中下部区域，用于观察腹部体表热态变化。" },
+        { key: "waist", name: "腰部", view: ["back"], present: 34.6, last: 33.9, high: 35.5, low: 33.8, change: 0.7, diff: "右高0.3℃", desc: "腰部区域覆盖背部中下段的腰背区域，用于观察腰背部位的体表热态变化。" },
+        { key: "spine", name: "脊柱", view: ["back"], present: 34.5, last: 34.4, high: 35.1, low: 34.0, change: 0.1, diff: "-", desc: "脊柱区域覆盖背部中线附近的纵向区域，用于观察背部中线附近的体表热态变化。" },
+        { key: "hip", name: "臀部", view: ["back"], present: 33.9, last: 34.0, high: 34.8, low: 33.2, change: -0.1, diff: "左高0.4℃", desc: "臀部区域覆盖骨盆下方的臀部区域，用于观察臀部体表热态变化。" }
+      ];
+
+      const state = {
+        view: "front",
+        selected: "shoulderNeck",
+        mode: "first"
+      };
+
+      const toast = document.getElementById("toast");
+      const sheetMask = document.getElementById("sheetMask");
+      const roiSheet = document.getElementById("roiSheet");
+      const sheetTitle = document.getElementById("sheetTitle");
+      const sheetBody = document.getElementById("sheetBody");
+      const sheetFoot = document.getElementById("sheetFoot");
+      let toastTimer = null;
+
+      function getMetric(key) {
+        return metrics.find((item) => item.key === key) || metrics[0];
+      }
+
+      function visibleMetrics() {
+        return metrics.filter((item) => item.view.includes(state.view));
+      }
+
+      function isFirstMode() {
+        return state.mode === "first";
+      }
+
+      function formatChange(value) {
+        if (Math.abs(value) < 0.05) return "→0.0℃";
+        return `${value > 0 ? "↑" : "↓"}${Math.abs(value).toFixed(1)}℃`;
+      }
+
+      function changeClass(value) {
+        if (Math.abs(value) < 0.05) return "flat";
+        return value > 0 ? "up" : "down";
+      }
+
+      function changeLevel(value) {
+        const absValue = Math.abs(value);
+        if (absValue < 0.3) return "变化较小";
+        if (absValue < 0.6) return "存在一定变化";
+        return "变化较明显";
+      }
+
+      function sideTemperature(metric) {
+        if (!metric.diff || metric.diff === "-") return null;
+        const match = metric.diff.match(/([左右])高([0-9.]+)℃/);
+        if (!match) return null;
+        const higherSide = match[1];
+        const value = Number(match[2]);
+        const half = value / 2;
+        return {
+          left: higherSide === "左" ? metric.present + half : metric.present - half,
+          right: higherSide === "右" ? metric.present + half : metric.present - half,
+          higherSide,
+          value
+        };
+      }
+
+      function symmetryText(metric) {
+        const side = sideTemperature(metric);
+        if (!side) return "该部位不做左右差异评估。";
+        const sideText = side.higherSide === "右" ? "右侧较左侧" : "左侧较右侧";
+        const level = side.value < 0.3 ? "左右差异较小" : side.value < 0.6 ? "存在一定左右差异" : "左右差异较明显";
+        return `左侧 ${side.left.toFixed(1)}℃，右侧 ${side.right.toFixed(1)}℃；${sideText}高 ${side.value.toFixed(1)}℃，${level}。`;
+      }
+
+      function distributionText(metric) {
+        const range = metric.high - metric.low;
+        const level = range >= 1.5 ? "温度起伏相对明显" : range >= 0.8 ? "存在一定温度起伏" : "温度分布相对平稳";
+        return `区域高值 ${metric.high.toFixed(1)}℃、区域低值 ${metric.low.toFixed(1)}℃，${level}。`;
+      }
+
+      function serviceText(metric) {
+        const map = {
+          shoulderNeck: "可结合近期肩颈紧张、久坐低头、运动和衣着遮挡情况查看。",
+          chest: "建议结合热图颜色分布、衣着遮挡和当次测量状态查看。",
+          abdomen: "可结合近期饮食、活动、衣着遮挡和腹部体感变化查看。",
+          waist: "可结合久坐、腰背疲劳、运动恢复、站姿和局部体感变化查看。",
+          spine: "建议结合背部整体热态分布共同查看，避免仅凭单一区域过度解读。",
+          hip: "可结合站姿、坐姿习惯、局部受压和衣着遮挡情况查看。"
+        };
+        const suffix = Math.abs(metric.change) >= 0.6 ? "如近期体感变化明显，可进一步咨询服务人员。" : "";
+        return `${map[metric.key] || "建议结合热图颜色、测量状态和近期体感变化综合查看。"}${suffix}`;
+      }
+
+      function renderOverall() {
+        const overallCard = document.getElementById("overallCard");
+        const rows = isFirstMode()
+          ? [
+              ["分布表现", "整体热态分布较平稳，肩颈和腰部区域热态相对更集中。"],
+              ["左右差异", "腰部和臀部存在轻微左右差异，可结合站姿、体态习惯和局部受压情况查看。"],
+              ["服务提示", "建议后续在相同环境、衣着和站姿条件下复测，便于观察热态变化。"]
+            ]
+          : [
+              ["变化重点", "肩颈、腰部和腹部较上次变化更明显，其中腰部变化最大，为 ↑0.7℃。"],
+              ["分布表现", "整体热态分布较平稳，肩颈和腰部区域温度相对更高，局部存在轻微温度起伏。"],
+              ["左右差异", "腰部和臀部左右温差相对更明显，可结合站姿、体态习惯和局部受压情况查看。"],
+              ["服务提示", "如相关部位近期体感变化明显，可向门店人员或专业服务人员进一步咨询。"]
+            ];
+        overallCard.innerHTML = rows.map(([label, text]) => `
+          <div class="overall-row"><strong>${label}</strong><span>${text}</span></div>
+        `).join("");
+      }
+
+      function showToast(text) {
+        toast.textContent = text;
+        toast.classList.add("show");
+        window.clearTimeout(toastTimer);
+        toastTimer = window.setTimeout(() => toast.classList.remove("show"), 1500);
+      }
+
+      function openRoiSheet(metric) {
+        sheetTitle.textContent = `${metric.name}区域说明`;
+        sheetBody.textContent = metric.desc;
+        sheetFoot.textContent = "说明：区域边界为系统计算范围，用于保持每次测量的数据口径一致，不等同于医学解剖边界。";
+        sheetMask.classList.add("is-open");
+        roiSheet.classList.add("is-open");
+      }
+
+      function openFirstMetricDetail(metric) {
+        const side = sideTemperature(metric);
+        const sideBlock = side
+          ? `
+            <div class="detail-section">
+              <h3 class="detail-section-title">左右差异</h3>
+              <div class="detail-grid">
+                <div class="detail-field"><span>左侧均温</span><b>${side.left.toFixed(1)}℃</b></div>
+                <div class="detail-field"><span>右侧均温</span><b>${side.right.toFixed(1)}℃</b></div>
+                <div class="detail-field"><span>左右温差</span><b>${metric.diff}</b></div>
+              </div>
+            </div>
+          `
+          : `
+            <div class="detail-section">
+              <h3 class="detail-section-title">左右差异</h3>
+              <p class="detail-note">该部位不做左右差异评估。</p>
+            </div>
+          `;
+        sheetTitle.textContent = `${metric.name}热态数据`;
+        sheetBody.innerHTML = `
+          <div class="detail-section">
+            <h3 class="detail-section-title">基础数据</h3>
+            <div class="detail-grid">
+              <div class="detail-field"><span>区域均温</span><b>${metric.present.toFixed(1)}℃</b></div>
+              <div class="detail-field"><span>区域高值</span><b>${metric.high.toFixed(1)}℃</b></div>
+              <div class="detail-field"><span>区域低值</span><b>${metric.low.toFixed(1)}℃</b></div>
+              <div class="detail-field"><span>区域差值</span><b>${(metric.high - metric.low).toFixed(1)}℃</b></div>
+            </div>
+          </div>
+          ${sideBlock}
+          <div class="detail-section">
+            <h3 class="detail-section-title">部位评估</h3>
+            <div class="detail-eval">
+              <div class="detail-eval-row"><strong>分布表现</strong><span>${distributionText(metric)}</span></div>
+              <div class="detail-eval-row"><strong>左右差异</strong><span>${symmetryText(metric)}</span></div>
+              <div class="detail-eval-row"><strong>服务提示</strong><span>${serviceText(metric)}</span></div>
+            </div>
+          </div>
+        `;
+        sheetFoot.textContent = `区域说明：${metric.desc}`;
+        sheetMask.classList.add("is-open");
+        roiSheet.classList.add("is-open");
+      }
+
+      function openMetricDetail(metric) {
+        if (isFirstMode()) {
+          openFirstMetricDetail(metric);
+          return;
+        }
+        const side = sideTemperature(metric);
+        const sideBlock = side
+          ? `
+            <div class="detail-section">
+              <h3 class="detail-section-title">左右差异</h3>
+              <div class="detail-grid">
+                <div class="detail-field"><span>左侧均温</span><b>${side.left.toFixed(1)}℃</b></div>
+                <div class="detail-field"><span>右侧均温</span><b>${side.right.toFixed(1)}℃</b></div>
+                <div class="detail-field"><span>左右温差</span><b>${metric.diff}</b></div>
+              </div>
+            </div>
+          `
+          : `
+            <div class="detail-section">
+              <h3 class="detail-section-title">左右差异</h3>
+              <p class="detail-note">该部位不做左右差异评估。</p>
+            </div>
+          `;
+        sheetTitle.textContent = `${metric.name}热态数据`;
+        sheetBody.innerHTML = `
+          <div class="detail-section">
+            <h3 class="detail-section-title">基础数据</h3>
+          </div>
+          <div class="detail-compare">
+            <div><b>${metric.last.toFixed(1)}℃</b><span>上次区域均温</span></div>
+            <div class="detail-change ${changeClass(metric.change)}">${formatChange(metric.change)}</div>
+            <div><b>${metric.present.toFixed(1)}℃</b><span>本次区域均温</span></div>
+          </div>
+          <div class="detail-grid">
+            <div class="detail-field"><span>区域高值</span><b>${metric.high.toFixed(1)}℃</b></div>
+            <div class="detail-field"><span>区域低值</span><b>${metric.low.toFixed(1)}℃</b></div>
+            <div class="detail-field"><span>区域差值</span><b>${(metric.high - metric.low).toFixed(1)}℃</b></div>
+          </div>
+          ${sideBlock}
+          <div class="detail-section">
+            <h3 class="detail-section-title">部位评估</h3>
+            <div class="detail-eval">
+              <div class="detail-eval-row"><strong>变化情况</strong><span>本次较上次 ${formatChange(metric.change)}，${changeLevel(metric.change)}。</span></div>
+              <div class="detail-eval-row"><strong>分布表现</strong><span>${distributionText(metric)}</span></div>
+              <div class="detail-eval-row"><strong>左右差异</strong><span>${symmetryText(metric)}</span></div>
+              <div class="detail-eval-row"><strong>服务提示</strong><span>${serviceText(metric)}</span></div>
+            </div>
+          </div>
+        `;
+        sheetFoot.textContent = `区域说明：${metric.desc}`;
+        sheetMask.classList.add("is-open");
+        roiSheet.classList.add("is-open");
+      }
+
+      function openOverallDetail() {
+        sheetTitle.textContent = "整体评估详情";
+        sheetBody.innerHTML = `
+          <div class="detail-section">
+            <div class="detail-eval">
+              <div class="detail-eval-row"><strong>变化重点</strong><span>肩颈、腰部和腹部较上次变化更明显，其中腰部变化最大，为 ↑0.7℃。</span></div>
+              <div class="detail-eval-row"><strong>分布表现</strong><span>整体热态分布较平稳，肩颈和腰部区域温度相对更高，局部存在轻微温度起伏。</span></div>
+              <div class="detail-eval-row"><strong>左右差异</strong><span>腰部和臀部左右温差相对更明显，可结合站姿、体态习惯和局部受压情况查看。</span></div>
+              <div class="detail-eval-row"><strong>服务提示</strong><span>如相关部位近期体感变化明显，可向门店人员或专业服务人员进一步咨询。</span></div>
+            </div>
+          </div>
+        `;
+        sheetFoot.textContent = "声明：本报告仅用于体表热态变化展示与健康管理沟通参考，不作为医学诊断或治疗依据。";
+        sheetMask.classList.add("is-open");
+        roiSheet.classList.add("is-open");
+      }
+
+      function closeRoiSheet() {
+        sheetMask.classList.remove("is-open");
+        roiSheet.classList.remove("is-open");
+      }
+
+      function selectRegion(key) {
+        const metric = getMetric(key);
+        if (!metric.view.includes(state.view)) {
+          state.view = metric.view[0];
+        }
+        state.selected = key;
+        render();
+      }
+
+      function renderRegionPicker() {
+        const menu = document.getElementById("regionMenu");
+        menu.innerHTML = visibleMetrics().map((item) => `
+          <button class="region-option ${item.key === state.selected ? "is-active" : ""}" data-select="${item.key}" type="button" role="menuitem">
+            ${item.name}
+          </button>
+        `).join("");
+        menu.querySelectorAll("[data-select]").forEach((btn) => {
+          btn.addEventListener("click", () => {
+            selectRegion(btn.dataset.select);
+            closeRegionPicker();
+          });
+        });
+      }
+
+      function renderTable() {
+        const body = document.getElementById("metricBody");
+        body.innerHTML = metrics.map((item) => `
+          <button class="metric-card ${item.key === state.selected ? "is-active" : ""}" data-row="${item.key}" type="button">
+            <div class="metric-compare ${isFirstMode() ? "is-first" : ""}">
+              ${isFirstMode() ? `
+                <span class="metric-label"><span class="metric-name">${item.name}</span><small>区域均温</small></span>
+                <span class="metric-change flat">${item.present.toFixed(1)}℃</span>
+              ` : `
+                <div class="metric-side">
+                  <span class="metric-label"><span class="metric-name">${item.name}</span><small>区域均温</small></span>
+                </div>
+                <div class="metric-center">
+                  <span class="metric-change ${changeClass(item.change)}">${formatChange(item.change)}</span>
+                  <span class="metric-level">${changeLevel(item.change)}</span>
+                </div>
+              `}
+              <span class="metric-arrow" aria-hidden="true">›</span>
+            </div>
+          </button>
+        `).join("");
+        body.querySelectorAll("[data-row]").forEach((row) => {
+          row.addEventListener("click", () => {
+            selectRegion(row.dataset.row);
+            openMetricDetail(getMetric(row.dataset.row));
+          });
+        });
+      }
+
+      function renderVisual() {
+        const metric = getMetric(state.selected);
+        const firstMode = isFirstMode();
+        document.getElementById("sectionTitle").textContent = firstMode ? "热成像结果" : "热成像对比";
+        document.getElementById("compareCard").classList.toggle("is-first", firstMode);
+        document.querySelectorAll("[data-measure-mode]").forEach((btn) => {
+          btn.classList.toggle("is-active", btn.dataset.measureMode === state.mode);
+        });
+        document.getElementById("rightCompareLabel").textContent = "2026/06/03 19:24:14";
+        document.getElementById("selectedNameTop").textContent = metric.name;
+        document.getElementById("selectedNameInline").textContent = metric.name;
+        const changeEl = document.getElementById("inlineChange");
+        if (firstMode) {
+          changeEl.textContent = `${metric.present.toFixed(1)}℃`;
+          changeEl.className = "mean";
+          document.getElementById("inlineLevel").textContent = "区域均温";
+        } else {
+          changeEl.textContent = formatChange(metric.change);
+          changeEl.className = changeClass(metric.change);
+          document.getElementById("inlineLevel").textContent = changeLevel(metric.change);
+        }
+        document.querySelectorAll(".heat-slider, .h5-compare-stage").forEach((slider) => {
+          slider.dataset.view = state.view;
+        });
+        document.querySelectorAll(".slider-roi-zone").forEach((zone) => {
+          zone.classList.toggle("is-active", zone.dataset.region === state.selected);
+        });
+        document.querySelectorAll(".view-toggle [data-view]").forEach((btn) => {
+          btn.classList.toggle("is-active", btn.dataset.view === state.view);
+        });
+      }
+
+      function render() {
+        if (!getMetric(state.selected).view.includes(state.view)) {
+          state.selected = visibleMetrics()[0].key;
+        }
+        renderVisual();
+        renderRegionPicker();
+        renderTable();
+        renderOverall();
+      }
+
+      function closeRegionPicker() {
+        const picker = document.getElementById("regionPicker");
+        const btn = document.getElementById("regionPickerBtn");
+        picker.classList.remove("is-open");
+        btn.setAttribute("aria-expanded", "false");
+      }
+
+      function toggleRegionPicker() {
+        const picker = document.getElementById("regionPicker");
+        const btn = document.getElementById("regionPickerBtn");
+        const willOpen = !picker.classList.contains("is-open");
+        picker.classList.toggle("is-open", willOpen);
+        btn.setAttribute("aria-expanded", String(willOpen));
+      }
+
+      document.querySelectorAll(".view-toggle [data-view]").forEach((btn) => {
+        btn.addEventListener("click", () => {
+          state.view = btn.dataset.view;
+          if (!getMetric(state.selected).view.includes(state.view)) {
+            state.selected = visibleMetrics()[0].key;
+          }
+          closeRegionPicker();
+          render();
+        });
+      });
+
+      document.querySelectorAll("[data-measure-mode]").forEach((btn) => {
+        btn.addEventListener("click", () => {
+          state.mode = btn.dataset.measureMode;
+          closeRegionPicker();
+          render();
+        });
+      });
+
+      document.getElementById("regionPickerBtn").addEventListener("click", (event) => {
+        event.stopPropagation();
+        toggleRegionPicker();
+      });
+
+      document.getElementById("regionMenu").addEventListener("click", (event) => {
+        event.stopPropagation();
+      });
+
+      document.addEventListener("click", () => {
+        closeRegionPicker();
+        document.getElementById("historyPanel").classList.remove("is-open");
+      });
+
+      document.querySelectorAll("[data-region]").forEach((part) => {
+        part.addEventListener("click", (event) => {
+          event.stopPropagation();
+          selectRegion(part.dataset.region);
+        });
+      });
+
+      const focusPanel = document.getElementById("focusPanel");
+      focusPanel.addEventListener("click", () => {
+        openMetricDetail(getMetric(state.selected));
+      });
+      focusPanel.addEventListener("keydown", (event) => {
+        if (event.key === "Enter" || event.key === " ") {
+          event.preventDefault();
+          openMetricDetail(getMetric(state.selected));
+        }
+      });
+
+      const overallDetailBtn = document.getElementById("overallDetailBtn");
+      if (overallDetailBtn) {
+        overallDetailBtn.addEventListener("click", openOverallDetail);
+      }
+
+      const heatInteraction = {
+        scale: 1,
+        x: 0,
+        y: 0,
+        dragging: false,
+        moved: false,
+        startX: 0,
+        startY: 0
+      };
+
+      function applyHeatTransform() {
+        document.querySelectorAll(".heatmap-frame").forEach((frame) => {
+          frame.style.setProperty("--zoom", heatInteraction.scale.toFixed(2));
+          frame.style.setProperty("--pan-x", `${heatInteraction.x}px`);
+          frame.style.setProperty("--pan-y", `${heatInteraction.y}px`);
+        });
+      }
+
+      document.querySelectorAll(".heatmap-frame").forEach((frame) => {
+        frame.addEventListener("wheel", (event) => {
+          event.preventDefault();
+          const delta = event.deltaY > 0 ? -0.12 : 0.12;
+          heatInteraction.scale = Math.min(2.6, Math.max(1, heatInteraction.scale + delta));
+          applyHeatTransform();
+        }, { passive: false });
+
+        frame.addEventListener("pointerdown", (event) => {
+          if (event.target.closest(".slider-roi-zone")) return;
+          heatInteraction.dragging = true;
+          heatInteraction.moved = false;
+          heatInteraction.startX = event.clientX - heatInteraction.x;
+          heatInteraction.startY = event.clientY - heatInteraction.y;
+          frame.classList.add("is-dragging");
+          frame.setPointerCapture(event.pointerId);
+        });
+
+        frame.addEventListener("pointermove", (event) => {
+          if (!heatInteraction.dragging) return;
+          const nextX = event.clientX - heatInteraction.startX;
+          const nextY = event.clientY - heatInteraction.startY;
+          if (Math.abs(nextX - heatInteraction.x) > 2 || Math.abs(nextY - heatInteraction.y) > 2) {
+            heatInteraction.moved = true;
+          }
+          heatInteraction.x = nextX;
+          heatInteraction.y = nextY;
+          applyHeatTransform();
+        });
+
+        frame.addEventListener("pointerup", (event) => {
+          frame.classList.remove("is-dragging");
+          heatInteraction.dragging = false;
+        });
+
+        frame.addEventListener("pointercancel", () => {
+          heatInteraction.dragging = false;
+          frame.classList.remove("is-dragging");
+        });
+      });
+
+      function setHeatSplit(value) {
+        const split = `${value}%`;
+        document.querySelectorAll(".heat-slider").forEach((slider) => {
+          slider.style.setProperty("--split", split);
+        });
+        document.querySelectorAll(".heat-range").forEach((range) => {
+          range.value = value;
+        });
+      }
+
+      document.querySelectorAll(".heat-range").forEach((range) => {
+        range.addEventListener("input", () => setHeatSplit(range.value));
+      });
+
+      const fullscreenViewer = document.getElementById("fullscreenViewer");
+      const viewerTransform = document.getElementById("viewerTransform");
+      const viewerStage = document.getElementById("viewerStage");
+      let viewerScale = 1;
+      let viewerX = 0;
+      let viewerY = 0;
+      let viewerDragging = false;
+      let viewerStart = { x: 0, y: 0 };
+
+      function applyViewerTransform() {
+        viewerTransform.style.transform = `translate(${viewerX}px, ${viewerY}px) scale(${viewerScale})`;
+      }
+
+      function resetViewer() {
+        viewerScale = 1;
+        viewerX = 0;
+        viewerY = 0;
+        applyViewerTransform();
+      }
+
+      const openFullscreen = document.getElementById("openFullscreen");
+      if (openFullscreen) {
+        openFullscreen.addEventListener("click", () => {
+          fullscreenViewer.classList.add("is-open");
+          resetViewer();
+        });
+      }
+
+      document.getElementById("viewerClose").addEventListener("click", () => {
+        fullscreenViewer.classList.remove("is-open");
+      });
+
+      document.getElementById("viewerReset").addEventListener("click", resetViewer);
+
+      viewerStage.addEventListener("wheel", (event) => {
+        event.preventDefault();
+        const delta = event.deltaY > 0 ? -0.12 : 0.12;
+        viewerScale = Math.min(3, Math.max(1, viewerScale + delta));
+        applyViewerTransform();
+      }, { passive: false });
+
+      viewerStage.addEventListener("pointerdown", (event) => {
+        if (event.target.closest(".heat-range")) return;
+        viewerDragging = true;
+        viewerStart = { x: event.clientX - viewerX, y: event.clientY - viewerY };
+        viewerStage.setPointerCapture(event.pointerId);
+      });
+
+      viewerStage.addEventListener("pointermove", (event) => {
+        if (!viewerDragging) return;
+        viewerX = event.clientX - viewerStart.x;
+        viewerY = event.clientY - viewerStart.y;
+        applyViewerTransform();
+      });
+
+      viewerStage.addEventListener("pointerup", () => {
+        viewerDragging = false;
+      });
+
+      document.getElementById("historyToggle").addEventListener("click", (event) => {
+        event.stopPropagation();
+        document.getElementById("historyPanel").classList.toggle("is-open");
+      });
+
+      document.querySelectorAll("[data-history]").forEach((btn) => {
+        btn.addEventListener("click", (event) => {
+          event.stopPropagation();
+          document.getElementById("historyToggle").textContent = btn.dataset.history;
+          document.getElementById("historyPanel").classList.remove("is-open");
+          showToast(`已切换对比报告：${btn.dataset.history}`);
+        });
+      });
+
+      document.querySelectorAll("[data-toast]").forEach((btn) => {
+        btn.addEventListener("click", () => showToast(btn.dataset.toast));
+      });
+
+      document.getElementById("sheetClose").addEventListener("click", closeRoiSheet);
+      sheetMask.addEventListener("click", closeRoiSheet);
+
+      render();
+    </script>
+  </body>
+</html>
