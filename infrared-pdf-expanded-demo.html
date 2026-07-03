@@ -1,0 +1,507 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>红外热态测量报告 - H5内容平铺示例版</title>
+  <style>
+    :root {
+      --brand: #13a8f6;
+      --brand-dark: #0877ff;
+      --ink: #162033;
+      --muted: #5d6f87;
+      --line: #cfe3f8;
+      --soft: #f3f8fd;
+      --soft-blue: #eaf6ff;
+      --up: #ef4444;
+      --down: #1263ff;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      background: #6f7480;
+      color: var(--ink);
+      font-family: "Microsoft YaHei", "PingFang SC", Arial, sans-serif;
+    }
+
+    .page-shell {
+      width: 960px;
+      margin: 28px auto;
+      padding: 18px;
+      background: #eef2f7;
+    }
+
+    .a4-page {
+      width: 794px;
+      min-height: 1123px;
+      margin: 0 auto;
+      padding: 32px 38px 28px;
+      background: #fff;
+      box-shadow: 0 18px 48px rgba(15, 23, 42, .25);
+    }
+
+    .a4-page + .a4-page {
+      margin-top: 22px;
+      page-break-before: always;
+    }
+
+    .report-head {
+      display: grid;
+      grid-template-columns: 1fr 100px;
+      gap: 24px;
+      align-items: start;
+      padding-bottom: 14px;
+      border-bottom: 3px solid var(--brand);
+    }
+
+    .logo {
+      letter-spacing: 7px;
+      font-size: 25px;
+      line-height: 1;
+      font-weight: 900;
+      color: #17233d;
+    }
+
+    .title {
+      margin-top: 14px;
+      font-size: 30px;
+      line-height: 1.08;
+      font-weight: 900;
+    }
+
+    .meta {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 7px 18px;
+      margin-top: 12px;
+      font-size: 13px;
+      line-height: 1.4;
+    }
+
+    .qr-wrap {
+      justify-self: end;
+      width: 94px;
+      text-align: center;
+      font-size: 12px;
+      line-height: 1.25;
+    }
+
+    .qr {
+      width: 82px;
+      height: 82px;
+      margin: 7px auto 0;
+      border: 2px solid #111827;
+      background:
+        linear-gradient(90deg, #111827 10px, transparent 10px) 0 0/24px 24px,
+        linear-gradient(#111827 10px, transparent 10px) 0 0/24px 24px,
+        #fff;
+    }
+
+    .notice {
+      margin: 13px 0 14px;
+      padding: 8px 10px;
+      border: 1px solid var(--line);
+      background: #f8fbff;
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 1.5;
+    }
+
+    .section-title {
+      display: flex;
+      align-items: baseline;
+      gap: 8px;
+      margin: 14px 0 8px;
+      font-size: 20px;
+      line-height: 1.2;
+      font-weight: 900;
+    }
+
+    .section-title::before {
+      content: "";
+      width: 4px;
+      height: 22px;
+      border-radius: 999px;
+      background: var(--brand);
+    }
+
+    .section-title small {
+      color: var(--muted);
+      font-size: 12px;
+      font-weight: 400;
+    }
+
+    .heat-strip {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr) 36px;
+      border: 1px solid var(--brand);
+      margin-bottom: 12px;
+    }
+
+    .figure {
+      min-width: 0;
+      border-right: 1px solid var(--line);
+      background: #fff;
+    }
+
+    .figure-title {
+      padding: 7px 4px;
+      text-align: center;
+      background: var(--soft-blue);
+      font-size: 13px;
+      font-weight: 900;
+    }
+
+    .figure-body {
+      height: 180px;
+      display: grid;
+      place-items: center;
+      background:
+        linear-gradient(45deg, #f7f9fc 25%, transparent 25%),
+        linear-gradient(-45deg, #f7f9fc 25%, transparent 25%),
+        linear-gradient(45deg, transparent 75%, #f7f9fc 75%),
+        linear-gradient(-45deg, transparent 75%, #f7f9fc 75%);
+      background-size: 18px 18px;
+      background-position: 0 0, 0 9px, 9px -9px, -9px 0;
+    }
+
+    .figure-body img {
+      max-width: 92%;
+      max-height: 164px;
+      object-fit: contain;
+    }
+
+    .figure-foot {
+      min-height: 34px;
+      padding: 6px 7px;
+      color: var(--muted);
+      background: #fbfdff;
+      font-size: 10.5px;
+      line-height: 1.45;
+    }
+
+    .scale {
+      display: grid;
+      grid-template-rows: 28px 1fr;
+      padding: 0 5px 8px;
+      background: #fbfdff;
+    }
+
+    .scale-title {
+      text-align: center;
+      padding-top: 7px;
+      font-size: 12px;
+    }
+
+    .scale-body {
+      display: grid;
+      grid-template-columns: 12px 1fr;
+      gap: 5px;
+      align-items: stretch;
+    }
+
+    .scale-bar {
+      border-radius: 999px;
+      background: linear-gradient(180deg, #d40000 0%, #ff7a00 20%, #fff100 40%, #54d93b 58%, #23b9d8 78%, #254fd2 100%);
+    }
+
+    .scale-labels {
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      color: var(--muted);
+      font-size: 10.5px;
+    }
+
+    .summary-box {
+      border: 1px solid var(--brand);
+      margin-bottom: 12px;
+      font-size: 12.5px;
+    }
+
+    .summary-row {
+      display: grid;
+      grid-template-columns: 96px 1fr;
+      border-top: 1px solid #dce8f4;
+    }
+
+    .summary-row:first-child { border-top: 0; }
+
+    .summary-row strong {
+      padding: 9px 10px;
+      background: var(--soft-blue);
+      font-weight: 900;
+    }
+
+    .summary-row span {
+      padding: 9px 12px;
+      line-height: 1.55;
+    }
+
+    .top3 {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 10px;
+      margin-bottom: 12px;
+    }
+
+    .top-card {
+      border: 1px solid var(--line);
+      border-radius: 6px;
+      background: #fbfdff;
+      padding: 10px 12px;
+    }
+
+    .top-card-head {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 8px;
+    }
+
+    .rank {
+      display: grid;
+      place-items: center;
+      width: 24px;
+      height: 24px;
+      border-radius: 50%;
+      background: #eaf3ff;
+      color: var(--brand-dark);
+      font-size: 13px;
+      font-weight: 900;
+    }
+
+    .part {
+      font-size: 16px;
+      font-weight: 900;
+    }
+
+    .change-pill {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-width: 68px;
+      padding: 5px 10px;
+      border-radius: 999px;
+      background: #fff0f0;
+      color: var(--up);
+      font-size: 16px;
+      font-weight: 900;
+    }
+
+    .top-card p {
+      margin: 7px 0 0;
+      color: var(--muted);
+      font-size: 11.5px;
+      line-height: 1.45;
+    }
+
+    .data-table {
+      width: 100%;
+      border-collapse: collapse;
+      border: 1px solid var(--brand);
+      font-size: 11.5px;
+      margin-bottom: 12px;
+    }
+
+    .data-table th {
+      padding: 6px 4px;
+      background: var(--soft-blue);
+      border: 1px solid #d3e7fb;
+      font-weight: 900;
+    }
+
+    .data-table td {
+      padding: 6px 4px;
+      text-align: center;
+      border: 1px solid #dce8f4;
+    }
+
+    .data-table td:nth-child(3),
+    .data-blue {
+      color: var(--brand-dark);
+      font-weight: 900;
+    }
+
+    .up { color: var(--up); font-weight: 900; }
+    .down { color: var(--down); font-weight: 900; }
+
+    .part-evals {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 8px;
+      margin-bottom: 12px;
+    }
+
+    .part-eval {
+      border: 1px solid var(--line);
+      border-radius: 6px;
+      overflow: hidden;
+      background: #fbfdff;
+      font-size: 11px;
+      line-height: 1.45;
+    }
+
+    .part-eval-head {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 7px 9px;
+      background: var(--soft-blue);
+      font-weight: 900;
+    }
+
+    .part-eval-name {
+      font-size: 13px;
+    }
+
+    .part-eval-change {
+      color: var(--up);
+      font-size: 13px;
+    }
+
+    .part-eval-change.down {
+      color: var(--down);
+    }
+
+    .part-eval-row {
+      display: grid;
+      grid-template-columns: 64px 1fr;
+      border-top: 1px solid #e3edf7;
+    }
+
+    .part-eval-row strong {
+      padding: 6px 8px;
+      color: var(--ink);
+      background: #f4f9ff;
+    }
+
+    .part-eval-row span {
+      padding: 6px 8px;
+      color: #34465d;
+    }
+
+    .footer {
+      margin-top: 13px;
+      padding-top: 10px;
+      border-top: 2px solid var(--brand);
+      color: var(--muted);
+      font-size: 11.5px;
+      line-height: 1.7;
+    }
+
+    @media print {
+      body { background: #fff; }
+      .page-shell {
+        width: auto;
+        margin: 0;
+        padding: 0;
+        background: #fff;
+      }
+      .a4-page {
+        box-shadow: none;
+        margin: 0;
+      }
+
+      .a4-page + .a4-page {
+        margin-top: 0;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="page-shell">
+    <article class="a4-page">
+      <header class="report-head">
+        <div>
+          <div class="logo">VISBODY</div>
+          <div class="title">红外热态测量报告</div>
+          <div class="meta">
+            <span>ID: 159****5797</span>
+            <span>性别：男</span>
+            <span>身高：180 cm</span>
+            <span>年龄：35岁</span>
+            <span>报告编号：IR20260603001</span>
+          </div>
+        </div>
+        <div class="qr-wrap">
+          <div>扫码查看报告</div>
+          <div class="qr"></div>
+        </div>
+      </header>
+
+      <div class="notice">测量提示：隔衣测量会受衣物材质、厚度和遮挡影响，结果仅供热态分布与趋势参考。</div>
+
+      <h2 class="section-title">热成像对比 <small>上次与本次使用同一温标展示</small></h2>
+      <section class="heat-strip">
+        <div class="figure">
+          <div class="figure-title">正面 - 上次</div>
+          <div class="figure-body"><img src="thermal-front-reference.png" alt="正面上次热图" /></div>
+          <div class="figure-foot">2026-05-08 18:35:52</div>
+        </div>
+        <div class="figure">
+          <div class="figure-title">正面 - 本次</div>
+          <div class="figure-body"><img src="thermal-front-reference.png" alt="正面本次热图" /></div>
+          <div class="figure-foot">2026-06-03 19:24:14</div>
+        </div>
+        <div class="figure">
+          <div class="figure-title">背面 - 上次</div>
+          <div class="figure-body"><img src="thermal-front-reference.png" alt="背面上次热图" /></div>
+          <div class="figure-foot">2026-05-08 18:35:52</div>
+        </div>
+        <div class="figure">
+          <div class="figure-title">背面 - 本次</div>
+          <div class="figure-body"><img src="thermal-front-reference.png" alt="背面本次热图" /></div>
+          <div class="figure-foot">2026-06-03 19:24:14</div>
+        </div>
+        <div class="scale">
+          <div class="scale-title">温度</div>
+          <div class="scale-body">
+            <div class="scale-bar"></div>
+            <div class="scale-labels"><span>40℃</span><span>38</span><span>36</span><span>34</span><span>32</span><span>30</span></div>
+          </div>
+        </div>
+      </section>
+
+      <h2 class="section-title">热态数据 <small>℃</small></h2>
+      <table class="data-table">
+        <thead>
+          <tr>
+            <th>部位</th>
+            <th>变化值</th>
+            <th>上次区域均温</th>
+            <th>本次区域均温</th>
+            <th>区域高值</th>
+            <th>区域低值</th>
+            <th>左右温差</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr><td>肩颈</td><td class="up">↑ 0.6</td><td>34.8</td><td>35.4</td><td>36.2</td><td>34.6</td><td>右高0.2℃</td></tr>
+          <tr><td>胸部</td><td class="up">↑ 0.1</td><td>35.1</td><td>35.2</td><td>35.9</td><td>34.9</td><td>右高0.1℃</td></tr>
+          <tr><td>腹部</td><td class="up">↑ 0.5</td><td>34.2</td><td>34.7</td><td>35.6</td><td>34.1</td><td>左高0.2℃</td></tr>
+          <tr><td>腰部</td><td class="up">↑ 0.7</td><td>33.9</td><td>34.6</td><td>35.5</td><td>33.8</td><td>右高0.3℃</td></tr>
+          <tr><td>脊柱</td><td class="up">↑ 0.1</td><td>34.4</td><td>34.5</td><td>35.1</td><td>34.0</td><td>-</td></tr>
+          <tr><td>臀部</td><td class="down">↓ 0.1</td><td>33.9</td><td>33.8</td><td>34.8</td><td>33.2</td><td>左高0.4℃</td></tr>
+        </tbody>
+      </table>
+
+      <h2 class="section-title">整体评估</h2>
+      <section class="summary-box">
+        <div class="summary-row"><strong>变化重点</strong><span>肩颈、腰部和腹部较上次变化更明显，其中腰部变化最大，为 ↑0.7℃。</span></div>
+        <div class="summary-row"><strong>分布表现</strong><span>整体热态分布较平稳，肩颈和腰部区域温度相对更高，局部存在轻微温度起伏。</span></div>
+        <div class="summary-row"><strong>左右差异</strong><span>腰部和臀部左右温差相对更明显，可结合站姿、体态习惯和局部受压情况查看。</span></div>
+        <div class="summary-row"><strong>服务提示</strong><span>如相关部位近期体感变化明显，可向门店人员或专业服务人员进一步咨询。</span></div>
+      </section>
+
+      <footer class="footer">
+        <div>复测提示：建议在相同环境、衣着、站位和静止条件下进行阶段性复测。</div>
+        <div>声明：本报告用于体表热态变化展示与健康管理沟通参考，不作为医学诊断或治疗依据。</div>
+      </footer>
+    </article>
+  </div>
+</body>
+</html>
