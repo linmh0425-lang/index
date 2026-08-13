@@ -1,0 +1,631 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>WellnessHub 视觉生命体征 Demo</title>
+  <style>
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      min-width: 1440px;
+      color: #17233d;
+      font-family: Arial, "Microsoft YaHei", sans-serif;
+      background: #fff;
+    }
+    header {
+      height: 58px;
+      display: grid;
+      grid-template-columns: 300px 1fr 300px;
+      align-items: center;
+      padding: 0 24px;
+      border-bottom: 1px solid #edf1f6;
+      background: #fff;
+    }
+    .brand { display: flex; align-items: baseline; gap: 12px; }
+    .logo { font-size: 34px; font-weight: 900; letter-spacing: 8px; color: #17213a; }
+    .powered { color: #c4cbd8; font-size: 12px; }
+    .platform-title { text-align: center; font-size: 22px; font-weight: 900; color: #111827; }
+    .account { display: flex; justify-content: flex-end; align-items: center; gap: 18px; color: #1f2a44; font-size: 14px; }
+    .badge-gem {
+      width: 24px; height: 24px; border-radius: 50%;
+      background: radial-gradient(circle at 35% 30%, #fff, #a95cff 42%, #7b34e8 74%);
+      box-shadow: 0 0 0 3px #f2e9ff;
+    }
+    .content { padding: 22px 28px 34px; }
+    .detail-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding-bottom: 12px;
+      border-bottom: 1px solid #e1e8f2;
+      color: #748198;
+    }
+    .meta { display: flex; align-items: center; gap: 10px; }
+    .back { color: #17233d; cursor: pointer; font-weight: 700; }
+    .detail-actions { display: flex; gap: 12px; align-items: center; }
+    .square-btn {
+      width: 30px; height: 30px;
+      display: inline-grid; place-items: center;
+      border: 1px solid #dde6f2;
+      border-radius: 3px;
+      color: #1263ff;
+      background: #fff;
+      font-weight: 900;
+    }
+    .ai-btn {
+      height: 34px;
+      border: 0;
+      border-radius: 4px;
+      padding: 0 18px;
+      background: #1263ff;
+      color: #fff;
+      font-weight: 900;
+    }
+    .tabs { display: flex; gap: 10px; padding: 12px 0 8px; }
+    .tab {
+      height: 34px;
+      min-width: 86px;
+      display: grid;
+      place-items: center;
+      border-radius: 3px;
+      color: #253650;
+      background: #eaf3fb;
+      font-weight: 900;
+    }
+    .tab.active { color: #fff; background: #1263ff; }
+    .page-grid {
+      display: grid;
+      grid-template-columns: 420px minmax(0, 1fr);
+      gap: 24px;
+      align-items: start;
+      margin-top: 6px;
+    }
+    .main-col {
+      min-width: 0;
+    }
+    .summary-col { min-width: 0; }
+    .section-title {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin: 16px 0 12px;
+      font-size: 18px;
+      font-weight: 900;
+    }
+    .section-title small {
+      color: #1263ff;
+      font-size: 14px;
+      font-weight: 800;
+    }
+    .sub-title {
+      height: 34px;
+      display: flex;
+      align-items: center;
+      color: #26364d;
+      font-size: 16px;
+      font-weight: 900;
+    }
+    .main-col .sub-title { display: none; }
+    .score-card {
+      border: 1px solid #e4ecf6;
+      border-radius: 4px;
+      background: #f9fbfe;
+    }
+    .vital-table {
+      width: 100%;
+      margin-top: -6px;
+      border-collapse: separate;
+      border-spacing: 0 6px;
+      font-size: 14px;
+    }
+    .vital-table th {
+      height: 42px;
+      background: #f1f3f6;
+      color: #6a7586;
+      font-weight: 900;
+      text-align: center;
+      border-right: 4px solid #fff;
+    }
+    .vital-table td {
+      height: 70px;
+      background: #f8fbff;
+      border-top: 1px solid #e4ecf6;
+      border-bottom: 1px solid #e4ecf6;
+      color: #4b5a70;
+      text-align: center;
+      vertical-align: middle;
+    }
+    .vital-table td:first-child { border-left: 1px solid #e4ecf6; text-align: left; padding-left: 16px; font-weight: 900; }
+    .vital-table td:last-child { border-right: 1px solid #e4ecf6; }
+    .metric-name {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      min-width: 0;
+      vertical-align: middle;
+    }
+    .name-muted { color: #99a6b7; font-weight: 700; margin-left: 4px; }
+    .help-tip {
+      position: relative;
+      width: 16px;
+      height: 16px;
+      display: inline-grid;
+      place-items: center;
+      flex: 0 0 auto;
+      border: 1px solid #9eb3cd;
+      border-radius: 50%;
+      color: #7b8da6;
+      background: #fff;
+      font-size: 11px;
+      line-height: 1;
+      cursor: help;
+    }
+    .help-tip::after {
+      content: attr(data-tip);
+      position: absolute;
+      left: 50%;
+      bottom: calc(100% + 8px);
+      z-index: 5;
+      width: 240px;
+      padding: 8px 10px;
+      border: 1px solid #d5e1ef;
+      border-radius: 4px;
+      color: #344154;
+      background: #fff;
+      box-shadow: 0 8px 22px rgba(18, 35, 61, .14);
+      font-size: 12px;
+      font-weight: 500;
+      line-height: 1.55;
+      text-align: left;
+      white-space: normal;
+      transform: translateX(-50%);
+      opacity: 0;
+      pointer-events: none;
+      visibility: hidden;
+    }
+    .help-tip:hover::after,
+    .help-tip:focus::after {
+      opacity: 1;
+      visibility: visible;
+    }
+    .value {
+      display: inline-flex;
+      align-items: baseline;
+      gap: 8px;
+      color: #26364d;
+      font-weight: 900;
+      font-size: 18px;
+    }
+    .delta { color: #8a98aa; font-size: 13px; font-weight: 800; }
+    .delta.up { color: #21b987; }
+    .delta.down { color: #68788e; }
+    .vital-table tbody tr:nth-child(3) .delta,
+    .vital-table tbody tr:nth-child(4) .delta { display: none; }
+    .status {
+      display: inline-flex;
+      align-items: center;
+      min-width: 58px;
+      justify-content: center;
+      height: 24px;
+      padding: 0 10px;
+      border-radius: 2px;
+      color: #fff;
+      font-weight: 900;
+      font-size: 13px;
+    }
+    .ok { background: #43c98b; }
+    .watch { background: #e5b62b; }
+    .warn { background: #f97316; }
+    .risk { background: #c52828; }
+    .position {
+      width: 430px;
+      margin: 0 auto;
+    }
+    .scale-labels {
+      position: relative;
+      display: block;
+      height: 18px;
+      color: #9aa7b8;
+      font-size: 12px;
+      line-height: 1;
+    }
+    .scale-labels span {
+      position: absolute;
+      left: var(--x);
+      transform: translateX(-50%);
+      white-space: nowrap;
+    }
+    .scale-caption {
+      display: grid;
+      grid-template-columns: var(--cols, 1fr 1fr 1fr);
+      gap: 3px;
+      color: #9aa7b8;
+      font-size: 12px;
+      line-height: 1.4;
+      text-align: center;
+    }
+    .bar {
+      position: relative;
+      display: grid;
+      gap: 3px;
+      grid-template-columns: var(--cols, 1fr 1fr 1fr);
+      margin: 7px 0 5px;
+      height: 7px;
+    }
+    .seg { border-radius: 99px; background: #cfd7e2; }
+    .seg.purple { background: #7c8cff; }
+    .seg.blue { background: #59aaf8; }
+    .seg.green { background: #43c98b; }
+    .seg.yellow { background: #e5b62b; }
+    .seg.orange { background: #f97316; }
+    .seg.red { background: #cf2b2b; }
+    .seg.deepred { background: #a61e1e; }
+    .marker {
+      position: absolute;
+      top: -6px;
+      left: var(--pos, 50%);
+      width: 13px;
+      height: 13px;
+      border-radius: 50%;
+      background: #fff;
+      border: 3px solid #208dff;
+      transform: translateX(-50%);
+      box-shadow: 0 0 0 2px rgba(32, 141, 255, .14);
+    }
+    .status.low { background: #59aaf8; color: #fff; }
+    .score-card {
+      min-height: 316px;
+      padding: 22px 24px;
+      margin-bottom: 24px;
+      border: 1px solid #e4ecf6;
+      border-radius: 4px;
+      background: #f9fbfe;
+    }
+    .score-title {
+      color: #26364d;
+      font-weight: 900;
+      font-size: 18px;
+      margin-bottom: 20px;
+    }
+    .score-row {
+      display: grid;
+      grid-template-columns: 128px 1fr;
+      align-items: center;
+      gap: 24px;
+    }
+    .ring {
+      width: 124px;
+      height: 124px;
+      border-radius: 50%;
+      display: grid;
+      place-items: center;
+      background: conic-gradient(#e5b62b 0 68%, #e1e5eb 68% 100%);
+    }
+    .ring-inner {
+      width: 86px;
+      height: 86px;
+      display: grid;
+      place-items: center;
+      border-radius: 50%;
+      background: #fff;
+      color: #e0a91e;
+      font-size: 22px;
+      font-weight: 900;
+      line-height: 1.12;
+      text-align: center;
+    }
+    .score-text strong {
+      display: block;
+      color: #e0a91e;
+      font-size: 26px;
+      margin-bottom: 8px;
+    }
+    .score-text p { margin: 0; color: #526174; line-height: 1.7; }
+    .state-list {
+      display: grid;
+      gap: 10px;
+    }
+    .state-item {
+      display: grid;
+      grid-template-columns: 10px 1fr;
+      align-items: center;
+      gap: 8px;
+      color: #526174;
+      font-size: 13px;
+      font-weight: 900;
+    }
+    .state-item i {
+      width: 8px;
+      height: 8px;
+      border-radius: 1px;
+      background: var(--c);
+    }
+    .state-item.is-active {
+      color: #d69b08;
+    }
+    .score-note {
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+      margin-top: 18px;
+      color: #526174;
+      line-height: 1.75;
+    }
+    .score-note .note-icon {
+      flex: 0 0 auto;
+      width: 22px;
+      height: 22px;
+      display: grid;
+      place-items: center;
+      margin-top: 2px;
+      border: 2px solid #9bb2cf;
+      border-radius: 50%;
+      color: #7890ad;
+      font-size: 13px;
+      font-weight: 900;
+    }
+    .score-note p { margin: 0; }
+    .legend {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px 18px;
+      margin-top: 22px;
+      color: #526174;
+      font-size: 13px;
+      font-weight: 800;
+    }
+    .dot {
+      display: inline-block;
+      width: 8px; height: 8px;
+      margin-right: 6px;
+      border-radius: 1px;
+      background: var(--c);
+    }
+    .trend-panel {
+      margin-top: 24px;
+      margin-left: 444px;
+      border: 1px solid #e4ecf6;
+      border-radius: 4px;
+      background: #f9fbfe;
+      padding: 18px 20px 16px;
+    }
+    .trend-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      height: 28px;
+      margin-bottom: 12px;
+      color: #26364d;
+      font-size: 16px;
+      font-weight: 900;
+    }
+    .trend-head small {
+      color: #8a98aa;
+      font-size: 12px;
+      font-weight: 700;
+    }
+    .trend-grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 14px;
+    }
+    .trend-card {
+      min-height: 132px;
+      border: 1px solid #dfe8f4;
+      border-radius: 3px;
+      background: #fff;
+      padding: 12px 12px 10px;
+    }
+    .trend-title-row {
+      display: flex;
+      align-items: baseline;
+      margin-bottom: 8px;
+    }
+    .trend-name {
+      color: #4b5a70;
+      font-size: 14px;
+      font-weight: 900;
+    }
+    .trend-chart {
+      width: 100%;
+      height: 76px;
+    }
+    .trend-axis { stroke: #d9e3ef; stroke-width: 1; }
+    .trend-fill { fill: rgba(32, 141, 255, .12); }
+    .trend-line { fill: none; stroke: #4ca3ff; stroke-width: 2.4; stroke-linecap: round; stroke-linejoin: round; }
+    .trend-line.alt { stroke: #21b987; }
+    .trend-dot { fill: #fff; stroke: #4ca3ff; stroke-width: 2; }
+    .trend-dot.alt { stroke: #21b987; }
+    .trend-labels {
+      display: flex;
+      justify-content: space-between;
+      margin-top: 2px;
+      color: #9aa7b8;
+      font-size: 10px;
+      line-height: 1.2;
+    }
+    .trend-legend {
+      display: flex;
+      gap: 12px;
+      margin-top: 4px;
+      color: #748198;
+      font-size: 11px;
+      font-weight: 800;
+    }
+    .trend-legend i {
+      display: inline-block;
+      width: 8px;
+      height: 8px;
+      margin-right: 4px;
+      border-radius: 50%;
+      background: var(--c);
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="brand"><div class="logo">VISBODY</div><div class="powered">Powered by Kuafu</div></div>
+    <div class="platform-title">维塑数字健康平台</div>
+    <div class="account"><span>简体中文⌄</span><span class="badge-gem"></span><strong>XAtest⌄</strong></div>
+  </header>
+  <main class="content">
+    <div class="detail-top">
+      <div class="meta"><span class="back">← 返回</span><span>ID: Victor? | 18092752661</span><span>男</span><span>175 cm</span><span>36岁</span><span>● 2026-08-04 17:00:23</span></div>
+      <div class="detail-actions"><span class="square-btn">↓</span><span class="square-btn">✉</span><span class="square-btn">□</span><button class="ai-btn">AI报告解读</button></div>
+    </div>
+    <nav class="tabs" aria-label="报告类型">
+      <div class="tab">身体成分</div><div class="tab">体态评估</div><div class="tab">脊柱评估</div><div class="tab">体围测量</div><div class="tab">平衡评估</div><div class="tab">肩部功能</div><div class="tab">颈部功能</div><div class="tab">热态测量</div><div class="tab active">生命体征</div>
+    </nav>
+    <div class="section-title">生命体征评估</div>
+    <section class="page-grid">
+      <aside class="summary-col">
+        <div class="score-card">
+          <div class="score-title">健康参考状态</div>
+          <div class="score-row">
+            <div class="ring"><div class="ring-inner">轻度<br>关注</div></div>
+            <div class="state-list" aria-label="健康参考状态等级">
+              <span class="state-item"><i style="--c:#43c98b"></i>状态良好</span>
+              <span class="state-item is-active"><i style="--c:#e5b62b"></i>轻度关注</span>
+              <span class="state-item"><i style="--c:#f97316"></i>中度关注</span>
+              <span class="state-item"><i style="--c:#cf2b2b"></i>重度关注</span>
+            </div>
+          </div>
+          <div class="score-note">
+            <span class="note-icon">!</span>
+            <p>血氧处于偏低范围，血压参考处于正常偏高范围。结果仅用于健康参考和趋势观察。</p>
+          </div>
+        </div>
+      </aside>
+      <div class="main-col">
+        <div class="sub-title">指标明细</div>
+        <table class="vital-table">
+          <thead>
+            <tr><th>项目名称</th><th>测量结果</th><th>测量值与标准位置</th><th>评估结果</th></tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><span class="metric-name">静息心率 <span class="help-tip" tabindex="0" title="静息状态下每分钟心脏跳动次数。" data-tip="静息状态下每分钟心脏跳动次数。">?</span></span><span class="name-muted">次/分钟</span></td>
+              <td><span class="value">66 <span class="delta up">↑ 2</span></span></td>
+              <td>
+                <div class="position">
+                  <div class="scale-labels"><span style="--x:22.22%">60</span><span style="--x:77.78%">100</span></div>
+                  <div class="bar" style="--cols: 1fr 2.5fr 1fr; --pos: 30.56%;"><span class="seg blue"></span><span class="seg green"></span><span class="seg yellow"></span><span class="marker"></span></div>
+                  <div class="scale-caption" style="--cols: 1fr 2.5fr 1fr;"><span>心率偏低</span><span>正常</span><span>心率偏高</span></div>
+                </div>
+              </td>
+              <td><span class="status ok">正常</span></td>
+            </tr>
+            <tr>
+              <td><span class="metric-name">心率变异性-SDNN <span class="help-tip" tabindex="0" title="正常心跳间期的标准差，反映短时心率变异性的总体波动参考。" data-tip="正常心跳间期的标准差，反映短时心率变异性的总体波动参考。">?</span></span><span class="name-muted">ms</span></td>
+              <td><span class="value">42 <span class="delta down">↓ 5</span></span></td>
+              <td>
+                <div class="position">
+                  <div class="scale-labels"><span style="--x:20%">30</span><span style="--x:80%">120</span></div>
+                  <div class="bar" style="--cols: 1fr 3fr 1fr; --pos: 28%;"><span class="seg blue"></span><span class="seg green"></span><span class="seg yellow"></span><span class="marker"></span></div>
+                  <div class="scale-caption" style="--cols: 1fr 3fr 1fr;"><span>偏低</span><span>正常</span><span>偏高</span></div>
+                </div>
+              </td>
+              <td><span class="status ok">正常</span></td>
+            </tr>
+            <tr>
+              <td><span class="metric-name">压力指数 <span class="help-tip" tabindex="0" title="基于视觉相机提取的连续PP间期序列，按Baevsky Stress Index公式计算的生理压力参考值。" data-tip="基于视觉相机提取的连续PP间期序列，按Baevsky Stress Index公式计算的生理压力参考值，仅用于健康趋势观察。">?</span></span></td>
+              <td><span class="value">128</span></td>
+              <td>
+                <div class="position">
+                  <div class="scale-labels"><span style="--x:10.94%">30</span><span style="--x:18.75%">50</span><span style="--x:37.5%">150</span><span style="--x:64.06%">500</span><span style="--x:84.38%">900</span></div>
+                  <div class="bar" style="--cols: .7fr .5fr 1.2fr 1.7fr 1.3fr 1fr; --pos: 33.38%;"><span class="seg purple"></span><span class="seg blue"></span><span class="seg green"></span><span class="seg yellow"></span><span class="seg orange"></span><span class="seg deepred"></span><span class="marker"></span></div>
+                  <div class="scale-caption" style="--cols: .7fr .5fr 1.2fr 1.7fr 1.3fr 1fr;"><span>放松</span><span>低压力</span><span>正常压力</span><span>压力偏高</span><span>高压力</span><span>极高压力</span></div>
+                </div>
+              </td>
+              <td><span class="status ok">正常压力</span></td>
+            </tr>
+            <tr>
+              <td><span class="metric-name">呼吸频率 <span class="help-tip" tabindex="0" title="静息状态下每分钟呼吸次数。" data-tip="静息状态下每分钟呼吸次数。">?</span></span><span class="name-muted">次/分钟</span></td>
+              <td><span class="value">14 <span class="delta">→ 0</span></span></td>
+              <td>
+                <div class="position">
+                  <div class="scale-labels"><span style="--x:22.22%">12</span><span style="--x:77.78%">20</span></div>
+                  <div class="bar" style="--cols: 1fr 2.5fr 1fr; --pos: 36.11%;"><span class="seg blue"></span><span class="seg green"></span><span class="seg yellow"></span><span class="marker"></span></div>
+                  <div class="scale-caption" style="--cols: 1fr 2.5fr 1fr;"><span>频率偏低</span><span>正常</span><span>频率偏高</span></div>
+                </div>
+              </td>
+              <td><span class="status ok">正常</span></td>
+            </tr>
+            <tr>
+              <td><span class="metric-name">血氧饱和度 <span class="help-tip" tabindex="0" title="血液中氧合血红蛋白占总血红蛋白的比例。" data-tip="血液中氧合血红蛋白占总血红蛋白的比例。">?</span></span><span class="name-muted">SpO2%</span></td>
+              <td><span class="value">94 <span class="delta down">↓ 1</span></span></td>
+              <td>
+                <div class="position">
+                  <div class="scale-labels"><span style="--x:20.41%">90</span><span style="--x:44.9%">95</span></div>
+                  <div class="bar" style="--cols: 1fr 1.2fr 2.7fr; --pos: 40%;"><span class="seg purple"></span><span class="seg blue"></span><span class="seg green"></span><span class="marker"></span></div>
+                  <div class="scale-caption" style="--cols: 1fr 1.2fr 2.7fr;"><span>明显偏低</span><span>偏低</span><span>正常</span></div>
+                </div>
+              </td>
+              <td><span class="status low">偏低</span></td>
+            </tr>
+            <tr>
+              <td><span class="metric-name">血压参考 <span class="help-tip" tabindex="0" title="基于视觉生命体征估算的收缩压/舒张压参考值，仅用于趋势观察。" data-tip="基于视觉生命体征估算的收缩压/舒张压参考值，仅用于趋势观察。">?</span></span><span class="name-muted">mmHg</span></td>
+              <td><span class="value">117/89 <span class="delta up">↑2/↑1</span></span></td>
+              <td>
+                <div class="position">
+                  <div class="scale-labels"><span style="--x:12.31%">90/60</span><span style="--x:36.92%">120/80</span><span style="--x:53.85%">140/90</span><span style="--x:69.23%">160/100</span><span style="--x:84.62%">180/110</span></div>
+                  <div class="bar" style="--cols: .8fr 1.6fr 1.1fr 1fr 1fr 1fr; --pos: 53%;"><span class="seg blue"></span><span class="seg green"></span><span class="seg yellow"></span><span class="seg orange"></span><span class="seg red"></span><span class="seg deepred"></span><span class="marker"></span></div>
+                  <div class="scale-caption" style="--cols: .8fr 1.6fr 1.1fr 1fr 1fr 1fr;"><span>偏低</span><span>正常</span><span>正常偏高</span><span>轻度关注</span><span>中度关注</span><span>重点关注</span></div>
+                </div>
+              </td>
+              <td><span class="status watch">正常偏高</span></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+    <section class="trend-panel" aria-label="趋势变化">
+      <div class="trend-head">
+        <span>趋势变化</span>
+        <small>仅展示静息心率、HRV-SDNN、血压参考</small>
+      </div>
+      <div class="trend-grid">
+        <article class="trend-card">
+          <div class="trend-title-row">
+            <span class="trend-name">静息心率 次/分钟</span>
+          </div>
+          <svg class="trend-chart" viewBox="0 0 300 76" role="img" aria-label="静息心率趋势">
+            <path class="trend-axis" d="M10 14H290M10 38H290M10 62H290" />
+            <path class="trend-fill" d="M10 39L57 35L104 37L151 32L198 36L245 34L290 31L290 64L10 64Z" />
+            <path class="trend-line" d="M10 39L57 35L104 37L151 32L198 36L245 34L290 31" />
+            <circle class="trend-dot" cx="10" cy="39" r="3" /><circle class="trend-dot" cx="57" cy="35" r="3" /><circle class="trend-dot" cx="104" cy="37" r="3" /><circle class="trend-dot" cx="151" cy="32" r="3" /><circle class="trend-dot" cx="198" cy="36" r="3" /><circle class="trend-dot" cx="245" cy="34" r="3" /><circle class="trend-dot" cx="290" cy="31" r="3" />
+          </svg>
+          <div class="trend-labels"><span>08/01</span><span>08/02</span><span>08/03</span><span>08/04</span><span>08/05</span><span>08/06</span><span>08/07</span></div>
+        </article>
+        <article class="trend-card">
+          <div class="trend-title-row">
+            <span class="trend-name">心率变异性-SDNN ms</span>
+          </div>
+          <svg class="trend-chart" viewBox="0 0 300 76" role="img" aria-label="HRV-SDNN趋势">
+            <path class="trend-axis" d="M10 14H290M10 38H290M10 62H290" />
+            <path class="trend-fill" d="M10 31L57 29L104 42L151 36L198 48L245 45L290 52L290 64L10 64Z" />
+            <path class="trend-line" d="M10 31L57 29L104 42L151 36L198 48L245 45L290 52" />
+            <circle class="trend-dot" cx="10" cy="31" r="3" /><circle class="trend-dot" cx="57" cy="29" r="3" /><circle class="trend-dot" cx="104" cy="42" r="3" /><circle class="trend-dot" cx="151" cy="36" r="3" /><circle class="trend-dot" cx="198" cy="48" r="3" /><circle class="trend-dot" cx="245" cy="45" r="3" /><circle class="trend-dot" cx="290" cy="52" r="3" />
+          </svg>
+          <div class="trend-labels"><span>08/01</span><span>08/02</span><span>08/03</span><span>08/04</span><span>08/05</span><span>08/06</span><span>08/07</span></div>
+        </article>
+        <article class="trend-card">
+          <div class="trend-title-row">
+            <span class="trend-name">血压参考 mmHg</span>
+          </div>
+          <svg class="trend-chart" viewBox="0 0 300 76" role="img" aria-label="血压趋势">
+            <path class="trend-axis" d="M10 14H290M10 38H290M10 62H290" />
+            <path class="trend-line" d="M10 28L57 24L104 29L151 22L198 26L245 25L290 21" />
+            <path class="trend-line alt" d="M10 52L57 50L104 48L151 45L198 47L245 44L290 42" />
+            <circle class="trend-dot" cx="10" cy="28" r="3" /><circle class="trend-dot" cx="57" cy="24" r="3" /><circle class="trend-dot" cx="104" cy="29" r="3" /><circle class="trend-dot" cx="151" cy="22" r="3" /><circle class="trend-dot" cx="198" cy="26" r="3" /><circle class="trend-dot" cx="245" cy="25" r="3" /><circle class="trend-dot" cx="290" cy="21" r="3" />
+            <circle class="trend-dot alt" cx="10" cy="52" r="3" /><circle class="trend-dot alt" cx="57" cy="50" r="3" /><circle class="trend-dot alt" cx="104" cy="48" r="3" /><circle class="trend-dot alt" cx="151" cy="45" r="3" /><circle class="trend-dot alt" cx="198" cy="47" r="3" /><circle class="trend-dot alt" cx="245" cy="44" r="3" /><circle class="trend-dot alt" cx="290" cy="42" r="3" />
+          </svg>
+          <div class="trend-labels"><span>08/01</span><span>08/02</span><span>08/03</span><span>08/04</span><span>08/05</span><span>08/06</span><span>08/07</span></div>
+          <div class="trend-legend"><span><i style="--c:#4ca3ff"></i>收缩压</span><span><i style="--c:#21b987"></i>舒张压</span></div>
+        </article>
+      </div>
+    </section>
+  </main>
+</body>
+</html>

@@ -1,0 +1,622 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>视觉生命体征 H5 Demo</title>
+  <style>
+    :root {
+      --bg: #10142b;
+      --bg-deep: #080b17;
+      --panel: #14284f;
+      --panel-2: #112449;
+      --line: #3b7bad;
+      --line-soft: rgba(80, 164, 224, .32);
+      --cyan: #02d7e4;
+      --cyan-2: #2deaf5;
+      --blue: #4f9eff;
+      --text: #f0f7ff;
+      --muted: #8fa2c0;
+      --danger: #ef5350;
+      --purple: #7c8cff;
+      --blue-low: #59aaf8;
+      --green: #43c98b;
+      --yellow: #e5b62b;
+      --orange: #f97316;
+      --red: #cf2b2b;
+      --deepred: #a61e1e;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Microsoft YaHei", sans-serif;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      min-height: 100vh;
+      color: var(--text);
+      background: linear-gradient(180deg, #171b34 0%, #0b0f20 100%);
+    }
+    .phone {
+      width: min(100%, 420px);
+      min-height: 100vh;
+      margin: 0 auto;
+      overflow: hidden;
+      background: linear-gradient(180deg, rgba(34,39,74,.98) 0%, rgba(16,22,47,.98) 44%, #090b17 100%);
+    }
+    .statusbar {
+      height: 28px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 12px;
+      color: #111;
+      background: #f7f7f7;
+      font-size: 13px;
+      font-weight: 650;
+    }
+    .app-title {
+      height: 48px;
+      display: grid;
+      grid-template-columns: 48px 1fr 48px;
+      align-items: center;
+      color: #111;
+      background: #f7f7f7;
+      border-bottom: 1px solid rgba(0,0,0,.08);
+    }
+    .app-title strong { text-align: center; font-size: 21px; }
+    .icon-btn {
+      border: 0;
+      background: transparent;
+      color: inherit;
+      font-size: 23px;
+      line-height: 1;
+    }
+    .top-actions {
+      display: flex;
+      justify-content: space-between;
+      padding: 18px 18px 8px;
+      color: var(--cyan);
+    }
+    .tabs {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      padding: 0 8px 10px;
+      border-bottom: 1px solid rgba(117,152,206,.16);
+    }
+    .tab {
+      position: relative;
+      border: 0;
+      background: transparent;
+      color: #7585a7;
+      padding: 14px 0 12px;
+      font-size: 15px;
+    }
+    .tab.is-active { color: var(--cyan); font-weight: 800; }
+    .tab.is-active::after {
+      content: "";
+      position: absolute;
+      left: 25%;
+      right: 25%;
+      bottom: 0;
+      height: 3px;
+      border-radius: 99px;
+      background: var(--cyan);
+      box-shadow: 0 0 12px rgba(2,215,228,.72);
+    }
+    .content { padding: 16px 12px 30px; }
+    .meta-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin: 4px 4px 14px;
+      color: var(--muted);
+      font-size: 14px;
+    }
+    .user-card {
+      margin-bottom: 16px;
+      padding: 15px 16px 14px;
+      border: 1px solid var(--line);
+      background: rgba(16,42,81,.74);
+      box-shadow: inset 0 0 28px rgba(30,99,164,.12);
+    }
+    .user-name {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      margin-bottom: 12px;
+      font-size: 18px;
+    }
+    .male { color: #6fa8ff; font-weight: 800; }
+    .user-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      color: var(--muted);
+      font-size: 15px;
+    }
+    .compare-box,
+    .metric-card {
+      border: 1px solid var(--line);
+      background: rgba(16,36,73,.78);
+      box-shadow: inset 0 0 28px rgba(30,99,164,.1);
+    }
+    .summary-card {
+      --score-percent: 68%;
+      --knob-angle: 154.8deg;
+      --score-color: var(--yellow);
+      position: relative;
+      margin-bottom: 18px;
+      padding: 76px 14px 20px;
+      overflow: hidden;
+      border: 1px solid rgba(71,166,224,.86);
+      border-radius: 8px;
+      background:
+        radial-gradient(circle at 12% 16%, rgba(158,70,148,.38), transparent 36%),
+        radial-gradient(circle at 88% 54%, rgba(30,111,204,.32), transparent 34%),
+        linear-gradient(145deg, rgba(31,28,64,.95), rgba(13,25,59,.96));
+      box-shadow:
+        inset 0 0 34px rgba(44,133,211,.16),
+        0 0 0 1px rgba(2,215,228,.08);
+    }
+    .score-panel-title {
+      position: absolute;
+      left: 0;
+      right: 0;
+      top: 0;
+      height: 58px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #f8fbff;
+      font-size: 22px;
+      font-weight: 900;
+      letter-spacing: 0;
+    }
+    .score-panel-title::before {
+      content: "";
+      position: absolute;
+      inset: 0 10px 0;
+      background: linear-gradient(90deg, rgba(115,58,126,.62), rgba(34,39,91,.76), rgba(21,40,91,.62));
+      clip-path: polygon(0 0, 22% 0, 33% 100%, 67% 100%, 78% 0, 100% 0, 100% 50%, 88% 50%, 78% 100%, 22% 100%, 12% 50%, 0 50%);
+    }
+    .score-panel-title::after {
+      content: "";
+      position: absolute;
+      left: 29%;
+      right: 29%;
+      bottom: 2px;
+      height: 2px;
+      background: linear-gradient(90deg, transparent, rgba(2,215,228,.95), transparent);
+      box-shadow: 0 0 12px rgba(2,215,228,.78);
+    }
+    .score-panel-title span {
+      position: relative;
+      z-index: 1;
+    }
+    .gauge-shell {
+      position: relative;
+      width: 176px;
+      height: 176px;
+      margin: 16px auto 12px;
+      display: grid;
+      place-items: center;
+    }
+    .gauge-ticks {
+      position: absolute;
+      inset: 0;
+      border-radius: 50%;
+      background: repeating-conic-gradient(from -90deg, rgba(170,195,232,.58) 0 2deg, transparent 2deg 10deg);
+      -webkit-mask: radial-gradient(farthest-side, transparent calc(100% - 13px), #000 calc(100% - 12px));
+      mask: radial-gradient(farthest-side, transparent calc(100% - 13px), #000 calc(100% - 12px));
+      opacity: .78;
+    }
+    .gauge-ring {
+      position: relative;
+      width: 142px;
+      aspect-ratio: 1;
+      border-radius: 50%;
+      display: grid;
+      place-items: center;
+      background: conic-gradient(from -90deg, var(--score-color) 0 var(--score-percent), rgba(102,119,151,.5) 0 100%);
+      box-shadow: 0 0 18px rgba(0,0,0,.18);
+    }
+    .gauge-ring::after {
+      content: "";
+      position: absolute;
+      inset: 22px;
+      border-radius: 50%;
+      background: #171b39;
+      box-shadow: inset 0 0 22px rgba(0,0,0,.2);
+    }
+    .gauge-inner {
+      position: relative;
+      z-index: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 2px;
+      color: var(--score-color);
+    }
+    .gauge-inner strong {
+      font-size: 26px;
+      line-height: 1;
+    }
+    .gauge-inner span {
+      color: #c7d3e9;
+      font-size: 17px;
+      font-weight: 800;
+    }
+    .gauge-knob {
+      position: absolute;
+      left: 50%;
+      top: 50%;
+      z-index: 2;
+      width: 18px;
+      height: 18px;
+      margin: -9px;
+      border: 4px solid #fff;
+      border-radius: 50%;
+      background: var(--score-color);
+      transform: rotate(var(--knob-angle)) translateX(71px);
+      box-shadow: 0 0 10px rgba(255,255,255,.28);
+    }
+    .score-compare {
+      text-align: center;
+      color: #9deac8;
+      font-size: 15px;
+      font-weight: 800;
+    }
+    .score-status {
+      margin: 8px 0 18px;
+      text-align: center;
+      color: var(--score-color);
+      font-size: 22px;
+      font-weight: 900;
+    }
+    .score-levels {
+      width: 252px;
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 10px 18px;
+      margin: 8px auto 18px;
+      color: #c7d3e9;
+      font-size: 14px;
+      font-weight: 900;
+    }
+    .score-level {
+      display: flex;
+      align-items: center;
+      gap: 7px;
+      min-width: 0;
+    }
+    .score-level i {
+      width: 8px;
+      height: 8px;
+      flex: 0 0 auto;
+      border-radius: 1px;
+      background: var(--c);
+    }
+    .score-level.is-active { color: var(--score-color); }
+    .score-alert {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 12px 14px;
+      border-radius: 8px;
+      color: #e7efff;
+      background: rgba(87,123,169,.54);
+      font-size: 15px;
+      line-height: 1.55;
+    }
+    .score-alert span {
+      flex: 0 0 auto;
+      width: 26px;
+      height: 26px;
+      display: grid;
+      place-items: center;
+      border: 2px solid rgba(214,226,245,.65);
+      border-radius: 50%;
+      color: rgba(229,239,255,.9);
+      font-weight: 900;
+    }
+    .score-alert p {
+      margin: 0;
+    }
+    .score-divider {
+      position: relative;
+      margin-top: 18px;
+      border-top: 1px dashed rgba(176,199,231,.32);
+    }
+    .score-divider span {
+      position: absolute;
+      left: 50%;
+      top: -10px;
+      width: 22px;
+      height: 22px;
+      transform: translateX(-50%);
+      border-radius: 50%;
+      background: conic-gradient(from 45deg, #1677ff, #7d4dff, #ff58c7, #1677ff);
+      box-shadow: 0 0 12px rgba(82,127,255,.4);
+    }
+    .compare-box {
+      position: relative;
+      margin-bottom: 18px;
+      padding: 16px;
+      text-align: center;
+      color: var(--muted);
+    }
+    .compare-box::before {
+      content: "选一份报告对比";
+      position: absolute;
+      left: 50%;
+      top: -14px;
+      padding: 0 30px;
+      transform: translateX(-50%);
+      color: #9fb4d1;
+      background: #101b38;
+      font-weight: 800;
+    }
+    .compare-grid {
+      display: grid;
+      grid-template-columns: 1fr 34px 1fr;
+      align-items: center;
+      gap: 8px;
+      color: #9fb4d1;
+      font-size: 15px;
+    }
+    .compare-grid strong { color: var(--cyan); font-size: 16px; }
+    .metric-card {
+      position: relative;
+      margin-bottom: 16px;
+      padding: 15px 16px 16px;
+    }
+    .metric-delta {
+      position: absolute;
+      right: -1px;
+      top: -1px;
+      min-width: 110px;
+      height: 26px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 0 12px;
+      color: #bde8ff;
+      background: rgba(35,114,179,.76);
+      clip-path: polygon(12px 0, 100% 0, 100% 100%, 0 100%);
+      font-size: 13px;
+      font-weight: 800;
+    }
+    .metric-head {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin: 10px 0 18px;
+      color: #d7e8ff;
+      font-size: 17px;
+      font-weight: 900;
+    }
+    .metric-name {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      min-width: 0;
+      flex-wrap: wrap;
+    }
+    .metric-ico {
+      width: 22px;
+      height: 22px;
+      display: grid;
+      place-items: center;
+      border: 2px solid var(--cyan);
+      border-radius: 50%;
+      color: var(--cyan);
+      font-size: 12px;
+      font-weight: 900;
+    }
+    .help-tip {
+      position: relative;
+      width: 17px;
+      height: 17px;
+      display: inline-grid;
+      place-items: center;
+      flex: 0 0 auto;
+      border: 1px solid rgba(184,211,245,.76);
+      border-radius: 50%;
+      color: #b8d3f5;
+      background: rgba(45,72,113,.68);
+      font-size: 11px;
+      line-height: 1;
+      cursor: help;
+    }
+    .help-tip::after {
+      content: attr(data-tip);
+      position: absolute;
+      left: 50%;
+      bottom: calc(100% + 9px);
+      z-index: 6;
+      width: min(240px, calc(100vw - 48px));
+      padding: 9px 10px;
+      border: 1px solid rgba(75,151,212,.76);
+      border-radius: 6px;
+      color: #eaf4ff;
+      background: rgba(18,35,72,.98);
+      box-shadow: 0 12px 24px rgba(0,0,0,.28);
+      font-size: 12px;
+      font-weight: 500;
+      line-height: 1.55;
+      white-space: normal;
+      transform: translateX(-50%);
+      opacity: 0;
+      pointer-events: none;
+      visibility: hidden;
+    }
+    .help-tip:hover::after,
+    .help-tip:focus::after {
+      opacity: 1;
+      visibility: visible;
+    }
+    .metric-value {
+      display: flex;
+      justify-content: center;
+      align-items: baseline;
+      gap: 6px;
+      margin-bottom: 14px;
+    }
+    .metric-value strong {
+      padding: 4px 18px;
+      border-radius: 999px;
+      background: var(--green);
+      color: #fff;
+      font-size: 22px;
+      line-height: 1;
+    }
+    .metric-value strong.low { background: var(--blue-low); color: #fff; }
+    .metric-value strong.watch { background: var(--yellow); color: #111827; }
+    .metric-value small { color: var(--muted); font-size: 13px; }
+    .range {
+      position: relative;
+      padding-top: 16px;
+    }
+    .range-nums {
+      position: relative;
+      height: 16px;
+      color: var(--muted);
+      font-size: 13px;
+      margin: 0 14px;
+    }
+    .range-nums span {
+      position: absolute;
+      left: var(--x);
+      transform: translateX(-50%);
+      white-space: nowrap;
+    }
+    .range-labels {
+      display: grid;
+      grid-template-columns: var(--cols, 1fr 1fr 1fr);
+      gap: 3px;
+      color: var(--muted);
+      font-size: 12px;
+      padding: 0 14px;
+      text-align: center;
+    }
+    .range-bar {
+      position: relative;
+      display: grid;
+      grid-template-columns: var(--cols, 1fr 1fr 1fr);
+      gap: 3px;
+      height: 7px;
+      margin: 6px 14px 8px;
+    }
+    .seg { border-radius: 99px; background: #7aa5dc; }
+    .seg.purple { background: var(--purple); }
+    .seg.blue { background: var(--blue-low); }
+    .seg.green { background: var(--green); }
+    .seg.yellow { background: var(--yellow); }
+    .seg.orange { background: var(--orange); }
+    .seg.red { background: var(--red); }
+    .seg.deepred { background: var(--deepred); }
+    .marker {
+      position: absolute;
+      left: var(--pos, 50%);
+      top: -12px;
+      width: 0;
+      height: 0;
+      transform: translateX(-50%);
+      border-left: 7px solid transparent;
+      border-right: 7px solid transparent;
+      border-top: 10px solid var(--cyan);
+      filter: drop-shadow(0 0 8px rgba(2,215,228,.55));
+    }
+  </style>
+</head>
+<body>
+  <main class="phone">
+    <div class="statusbar"><span>11:54</span><span>中国电信 100%</span></div>
+    <div class="app-title"><button class="icon-btn">‹</button><strong>Visbody</strong><button class="icon-btn">...</button></div>
+    <div class="top-actions"><span>≡</span><span>↺</span></div>
+    <nav class="tabs" aria-label="报告分类">
+      <button class="tab">体成分</button><button class="tab">体态</button><button class="tab">体围</button><button class="tab">肩部</button><button class="tab is-active">生命</button>
+    </nav>
+    <section class="content">
+      <div class="meta-row"><span>2026/08/04 17:00</span><span>趋势  分享</span></div>
+      <div class="user-card">
+        <div class="user-name">一二三四五六七八九十 <span class="male">♂</span></div>
+        <div class="user-grid"><span>身高：175 cm</span><span>年龄：36 岁</span></div>
+      </div>
+      <section class="summary-card">
+        <div class="score-panel-title"><span>生命体征健康参考状态</span></div>
+        <div class="gauge-shell">
+          <div class="gauge-ticks"></div>
+          <div class="gauge-ring">
+            <div class="gauge-inner"><strong>轻度</strong><span>关注</span></div>
+          </div>
+          <span class="gauge-knob"></span>
+        </div>
+        <div class="score-levels" aria-label="健康参考状态等级">
+          <span class="score-level"><i style="--c:#43c98b"></i>状态良好</span>
+          <span class="score-level is-active"><i style="--c:#e5b62b"></i>轻度关注</span>
+          <span class="score-level"><i style="--c:#f97316"></i>中度关注</span>
+          <span class="score-level"><i style="--c:#cf2b2b"></i>重度关注</span>
+        </div>
+        <div class="score-alert">
+          <span>!</span>
+          <p>血氧偏低，血压参考正常偏高，结果仅用于健康参考和趋势观察。</p>
+        </div>
+        <div class="score-divider"><span></span></div>
+      </section>
+      <section class="metric-card">
+        <div class="metric-head"><span class="metric-ico">H</span><span class="metric-name">静息心率 <span class="help-tip" tabindex="0" title="静息状态下每分钟心脏跳动次数。" data-tip="静息状态下每分钟心脏跳动次数。">?</span> / 次/分钟</span></div>
+        <div class="metric-value"><strong>66</strong><small>正常</small></div>
+        <div class="range">
+          <div class="range-nums"><span style="--x:22.22%">60</span><span style="--x:77.78%">100</span></div>
+          <div class="range-bar" style="--cols: 1fr 2.5fr 1fr; --pos: 30.56%;"><span class="seg blue"></span><span class="seg green"></span><span class="seg yellow"></span><span class="marker"></span></div>
+          <div class="range-labels" style="--cols: 1fr 2.5fr 1fr;"><span>心率偏低</span><span>正常</span><span>心率偏高</span></div>
+        </div>
+      </section>
+      <section class="metric-card">
+        <div class="metric-head"><span class="metric-ico">O</span><span class="metric-name">血氧饱和度 <span class="help-tip" tabindex="0" title="血液中氧合血红蛋白占总血红蛋白的比例。" data-tip="血液中氧合血红蛋白占总血红蛋白的比例。">?</span> / SpO2%</span></div>
+        <div class="metric-value"><strong class="low">94</strong><small>偏低</small></div>
+        <div class="range">
+          <div class="range-nums"><span style="--x:20.41%">90</span><span style="--x:44.9%">95</span></div>
+          <div class="range-bar" style="--cols: 1fr 1.2fr 2.7fr; --pos: 40%;"><span class="seg purple"></span><span class="seg blue"></span><span class="seg green"></span><span class="marker"></span></div>
+          <div class="range-labels" style="--cols: 1fr 1.2fr 2.7fr;"><span>明显偏低</span><span>偏低</span><span>正常</span></div>
+        </div>
+      </section>
+      <section class="metric-card">
+        <div class="metric-head"><span class="metric-ico">S</span><span class="metric-name">压力指数 <span class="help-tip" tabindex="0" title="基于视觉相机提取的连续PP间期序列，按Baevsky Stress Index公式计算的生理压力参考值。" data-tip="基于视觉相机提取的连续PP间期序列，按Baevsky Stress Index公式计算的生理压力参考值，仅用于健康趋势观察。">?</span></span></div>
+        <div class="metric-value"><strong>128</strong><small>正常压力</small></div>
+        <div class="range">
+          <div class="range-nums"><span style="--x:10.94%">30</span><span style="--x:18.75%">50</span><span style="--x:37.5%">150</span><span style="--x:64.06%">500</span><span style="--x:84.38%">900</span></div>
+          <div class="range-bar" style="--cols: .7fr .5fr 1.2fr 1.7fr 1.3fr 1fr; --pos: 33.38%;"><span class="seg purple"></span><span class="seg blue"></span><span class="seg green"></span><span class="seg yellow"></span><span class="seg orange"></span><span class="seg deepred"></span><span class="marker"></span></div>
+          <div class="range-labels" style="--cols: .7fr .5fr 1.2fr 1.7fr 1.3fr 1fr;"><span>放松</span><span>低压力</span><span>正常</span><span>偏高</span><span>高压力</span><span>极高</span></div>
+        </div>
+      </section>
+      <section class="metric-card">
+        <div class="metric-head"><span class="metric-ico">V</span><span class="metric-name">心率变异性-SDNN <span class="help-tip" tabindex="0" title="正常心跳间期的标准差，反映短时心率变异性的总体波动参考。" data-tip="正常心跳间期的标准差，反映短时心率变异性的总体波动参考。">?</span> / ms</span></div>
+        <div class="metric-value"><strong>42</strong><small>正常</small></div>
+        <div class="range">
+          <div class="range-nums"><span style="--x:20%">30</span><span style="--x:80%">120</span></div>
+          <div class="range-bar" style="--cols: 1fr 3fr 1fr; --pos: 28%;"><span class="seg blue"></span><span class="seg green"></span><span class="seg yellow"></span><span class="marker"></span></div>
+          <div class="range-labels" style="--cols: 1fr 3fr 1fr;"><span>偏低</span><span>正常</span><span>偏高</span></div>
+        </div>
+      </section>
+      <section class="metric-card">
+        <div class="metric-head"><span class="metric-ico">R</span><span class="metric-name">呼吸频率 <span class="help-tip" tabindex="0" title="静息状态下每分钟呼吸次数。" data-tip="静息状态下每分钟呼吸次数。">?</span> / 次/分钟</span></div>
+        <div class="metric-value"><strong>14</strong><small>正常</small></div>
+        <div class="range">
+          <div class="range-nums"><span style="--x:22.22%">12</span><span style="--x:77.78%">20</span></div>
+          <div class="range-bar" style="--cols: 1fr 2.5fr 1fr; --pos: 36.11%;"><span class="seg blue"></span><span class="seg green"></span><span class="seg yellow"></span><span class="marker"></span></div>
+          <div class="range-labels" style="--cols: 1fr 2.5fr 1fr;"><span>呼吸偏低</span><span>正常</span><span>呼吸偏高</span></div>
+        </div>
+      </section>
+      <section class="metric-card">
+        <div class="metric-head"><span class="metric-ico">BP</span><span class="metric-name">血压参考 <span class="help-tip" tabindex="0" title="基于视觉生命体征估算的收缩压/舒张压参考值，仅用于趋势观察。" data-tip="基于视觉生命体征估算的收缩压/舒张压参考值，仅用于趋势观察。">?</span> / mmHg</span></div>
+        <div class="metric-value"><strong class="watch">117/89</strong><small>正常偏高</small></div>
+        <div class="range">
+          <div class="range-nums"><span style="--x:12.31%">90/60</span><span style="--x:36.92%">120/80</span><span style="--x:53.85%">140/90</span><span style="--x:69.23%">160/100</span><span style="--x:84.62%">180/110</span></div>
+          <div class="range-bar" style="--cols: .8fr 1.6fr 1.1fr 1fr 1fr 1fr; --pos: 53%;"><span class="seg blue"></span><span class="seg green"></span><span class="seg yellow"></span><span class="seg orange"></span><span class="seg red"></span><span class="seg deepred"></span><span class="marker"></span></div>
+          <div class="range-labels" style="--cols: .8fr 1.6fr 1.1fr 1fr 1fr 1fr;"><span>偏低</span><span>正常</span><span>正常偏高</span><span>轻度关注</span><span>中度关注</span><span>重点关注</span></div>
+        </div>
+      </section>
+    </section>
+  </main>
+</body>
+</html>

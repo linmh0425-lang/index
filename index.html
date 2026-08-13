@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>红外热态测量三端 Demo</title>
+  <title>VISBODY Demo 入口</title>
   <style>
     :root {
       color-scheme: light;
@@ -83,6 +83,19 @@
       font-size: 13px;
       font-weight: 800;
     }
+    .tag.vital {
+      background: #eefcff;
+      color: #008da2;
+    }
+    .group-title {
+      margin: 34px 0 14px;
+      font-size: 18px;
+      font-weight: 900;
+      color: var(--ink);
+    }
+    .group-title:first-of-type {
+      margin-top: 0;
+    }
     h2 {
       margin: 18px 0 10px;
       font-size: 21px;
@@ -109,8 +122,9 @@
 <body>
   <main>
     <div class="brand">VISBODY</div>
-    <h1>红外热态测量三端 Demo</h1>
-    <p class="sub">用于查看大中台配置、WellnessHub 报告预览、H5 移动端报告三端原型。</p>
+    <h1>VISBODY 健康测量 Demo 入口</h1>
+    <p class="sub">用于查看红外热态测量与视觉生命体征测量的多端原型，包括设备端、WellnessHub、H5 与 PDF 报告展示。</p>
+    <h2 class="group-title">红外热态测量</h2>
     <section class="grid" aria-label="Demo 列表">
       <a class="card" href="./wellnesshub-admin-infrared-config-demo.html">
         <span class="tag">大中台</span>
@@ -128,6 +142,33 @@
         <span class="tag">H5</span>
         <h2>移动端报告</h2>
         <p>展示首次测量与再次测量两种状态，突出热成像对比、部位变化、整体评估与部位详情。</p>
+        <div class="arrow">打开 Demo →</div>
+      </a>
+    </section>
+    <h2 class="group-title">视觉生命体征测量</h2>
+    <section class="grid" aria-label="视觉生命体征 Demo 列表">
+      <a class="card" href="./visual-vitals/device.html">
+        <span class="tag vital">设备端</span>
+        <h2>生命体征测量流程</h2>
+        <p>展示项目选择、站上转台、转台右转定位、20 秒视觉采集、转台复位与是否继续测量流程。</p>
+        <div class="arrow">打开 Demo →</div>
+      </a>
+      <a class="card" href="./visual-vitals/wellnesshub.html">
+        <span class="tag vital">WellnessHub</span>
+        <h2>生命体征报告预览</h2>
+        <p>展示健康参考状态、指标明细、标准位置、历史趋势，以及心率、HRV、压力指数、呼吸、血氧、血压参考等指标。</p>
+        <div class="arrow">打开 Demo →</div>
+      </a>
+      <a class="card" href="./visual-vitals/h5.html">
+        <span class="tag vital">H5</span>
+        <h2>移动端生命体征报告</h2>
+        <p>沿用深色 H5 报告风格，展示健康参考状态、四级状态等级、指标卡片与生命体征结果说明。</p>
+        <div class="arrow">打开 Demo →</div>
+      </a>
+      <a class="card" href="./visual-vitals/pdf.html">
+        <span class="tag vital">PDF 示例</span>
+        <h2>生命体征 PDF 报告</h2>
+        <p>用于评审 PDF 报告中的健康参考状态、指标明细、标准范围、与上次对比和历史趋势展示方式。</p>
         <div class="arrow">打开 Demo →</div>
       </a>
     </section>
