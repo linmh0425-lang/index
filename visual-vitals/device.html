@@ -757,10 +757,10 @@
       overflow: hidden;
       border-radius: 28px;
       background:
-        radial-gradient(circle at 50% 55%, rgba(21,215,255,0.16), transparent 56%),
-        linear-gradient(180deg, rgba(10,28,58,0.9), rgba(3,9,21,0.96));
-      border: 1px solid rgba(21,215,255,0.24);
-      box-shadow: 0 0 46px rgba(21,215,255,0.16), inset 0 0 36px rgba(31,107,255,0.18);
+        radial-gradient(circle at 50% 55%, rgba(255,92,96,0.16), transparent 58%),
+        linear-gradient(180deg, rgba(34,12,20,0.88), rgba(3,9,21,0.96));
+      border: 1px solid rgba(255,92,96,0.28);
+      box-shadow: 0 0 46px rgba(255,92,96,0.12), inset 0 0 34px rgba(255,122,69,0.12);
     }
 
     .heartbeat-panel::before {
@@ -768,7 +768,7 @@
       position: absolute;
       inset: -55px -20px;
       border-radius: 50%;
-      background: radial-gradient(circle, rgba(21,215,255,0.18), transparent 62%);
+      background: radial-gradient(circle, rgba(255,92,96,0.18), transparent 62%);
       animation: heartbeatAura 1.4s ease-in-out infinite;
     }
 
@@ -777,11 +777,11 @@
       position: absolute;
       inset: 0;
       background:
-        linear-gradient(rgba(255,255,255,0.06) 1px, transparent 1px),
-        linear-gradient(90deg, rgba(255,255,255,0.06) 1px, transparent 1px);
+        linear-gradient(rgba(255,255,255,0.035) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255,255,255,0.025) 1px, transparent 1px);
       background-size: 24px 24px;
       mask-image: radial-gradient(circle at 50% 50%, #000 0 62%, transparent 88%);
-      opacity: 0.42;
+      opacity: 0.28;
     }
 
     .vital-wave {
@@ -801,7 +801,7 @@
     }
 
     .wave-base {
-      stroke: rgba(120,169,230,0.2);
+      stroke: rgba(255,123,112,0.16);
       stroke-width: 7;
     }
 
@@ -810,7 +810,7 @@
       stroke-width: 7;
       stroke-dasharray: 720;
       stroke-dashoffset: 720;
-      filter: drop-shadow(0 0 10px rgba(21,215,255,0.78));
+      filter: drop-shadow(0 0 10px rgba(255,92,96,0.72));
       animation: heartbeatTrace 2s linear infinite;
     }
 
@@ -827,8 +827,8 @@
       width: 2px;
       height: calc(100% - 56px);
       border-radius: 999px;
-      background: linear-gradient(180deg, transparent, rgba(21,215,255,0.85), transparent);
-      box-shadow: 0 0 18px rgba(21,215,255,0.72);
+      background: linear-gradient(180deg, transparent, rgba(255,111,97,0.86), transparent);
+      box-shadow: 0 0 18px rgba(255,92,96,0.62);
       animation: waveCursor 2s linear infinite;
     }
 
@@ -840,8 +840,8 @@
       width: 11px;
       height: 11px;
       border-radius: 50%;
-      background: #e7fbff;
-      box-shadow: 0 0 18px rgba(21,215,255,0.9);
+      background: #fff4ef;
+      box-shadow: 0 0 18px rgba(255,92,96,0.86), 0 0 4px rgba(255,255,255,0.9);
       animation: heartbeatDot 2s linear infinite;
     }
 
@@ -1699,9 +1699,9 @@
               <svg class="vital-wave" viewBox="0 0 360 180" aria-hidden="true">
                 <defs>
                   <linearGradient id="vitalWaveGradient" x1="0" x2="1" y1="0" y2="0">
-                    <stop offset="0%" stop-color="#1f6bff" />
-                    <stop offset="45%" stop-color="#15d7ff" />
-                    <stop offset="100%" stop-color="#a8f4ff" />
+                    <stop offset="0%" stop-color="#ff4d5a" />
+                    <stop offset="52%" stop-color="#ff7a45" />
+                    <stop offset="100%" stop-color="#ffd0bf" />
                   </linearGradient>
                 </defs>
                 <path class="wave-base" d="M0 96 H46 L60 78 L76 122 L94 28 L116 148 L132 96 H176 L190 86 L204 106 L220 96 H258 L272 78 L288 118 L306 96 H360" />
