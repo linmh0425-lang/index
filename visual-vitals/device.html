@@ -692,54 +692,87 @@
       position: relative;
       display: grid;
       place-items: center;
-      width: 240px;
-      height: 240px;
+      width: 264px;
+      height: 264px;
       border-radius: 50%;
-      background: radial-gradient(circle, rgba(31,107,255,0.28), rgba(4,12,27,0.86) 62%, transparent 64%);
-      box-shadow: 0 0 52px rgba(31,107,255,0.28);
+      background:
+        radial-gradient(circle, rgba(31,107,255,0.28), rgba(4,12,27,0.92) 58%, transparent 60%),
+        rgba(4,12,27,0.3);
+      box-shadow: 0 0 58px rgba(31,107,255,0.24);
     }
 
     .processing-orbit::before {
       content: "";
       position: absolute;
-      inset: 16px;
+      inset: 18px;
       border-radius: 50%;
-      border: 8px solid rgba(255,255,255,0.08);
-      border-top-color: #15d7ff;
-      border-right-color: #15d7ff;
-      animation: spin 1.6s linear infinite;
+      border: 1px solid rgba(21,215,255,0.18);
+      box-shadow: inset 0 0 30px rgba(31,107,255,0.22);
     }
 
-    .processing-orbit span {
+    .processing-orbit::after {
+      content: "";
+      position: absolute;
+      inset: -10px;
+      border-radius: 50%;
+      background: conic-gradient(from -90deg, rgba(21,215,255,0.16), transparent 28%, rgba(31,107,255,0.12), transparent 58%);
+      filter: blur(14px);
+      opacity: 0.72;
+      animation: resultGlow 2.8s ease-in-out infinite;
+    }
+
+    .processing-center {
       position: relative;
-      z-index: 1;
+      z-index: 3;
+      display: grid;
+      place-items: center;
+      gap: 8px;
       color: #d8ecff;
-      font-size: 28px;
+      text-align: center;
+    }
+
+    .processing-label {
+      font-size: 24px;
       font-weight: 700;
     }
 
-    .processing-dots {
-      display: flex;
-      justify-content: center;
-      gap: 10px;
-      margin-top: 28px;
+    .processing-time {
+      color: #79b2ff;
+      font-size: 16px;
+      line-height: 1.2;
     }
 
-    .processing-dots span {
-      width: 10px;
-      height: 10px;
+    .processing-time strong {
+      color: #fff;
+      font-size: 32px;
+      font-weight: 700;
+      line-height: 1;
+    }
+
+    .timer-segment {
+      position: absolute;
+      z-index: 2;
+      left: 50%;
+      top: 50%;
+      width: 5px;
+      height: 18px;
       border-radius: 999px;
-      background: #15d7ff;
-      box-shadow: 0 0 18px rgba(21, 215, 255, 0.62);
-      animation: dotPulse 1.2s ease-in-out infinite;
+      background: rgba(255,255,255,0.11);
+      transform: translate(-50%, -50%) rotate(calc(var(--i) * 9deg)) translateY(-118px);
+      transform-origin: center;
+      transition: background-color 180ms linear, box-shadow 180ms linear, opacity 180ms linear;
+      opacity: 0.72;
     }
 
-    .processing-dots span:nth-child(2) {
-      animation-delay: .16s;
+    .timer-segment.is-active {
+      background: linear-gradient(180deg, #15d7ff, #1f6bff);
+      box-shadow: 0 0 12px rgba(21,215,255,0.66);
+      opacity: 1;
     }
 
-    .processing-dots span:nth-child(3) {
-      animation-delay: .32s;
+    .timer-segment.is-current {
+      background: #e7fbff;
+      box-shadow: 0 0 18px rgba(21,215,255,0.9);
     }
 
     .vital-wave-stage {
@@ -1356,6 +1389,11 @@
       42% { transform: scale(1.04); opacity: 0.78; }
     }
 
+    @keyframes resultGlow {
+      0%, 100% { transform: scale(0.94); opacity: 0.48; }
+      50% { transform: scale(1.04); opacity: 0.82; }
+    }
+
     @media (max-width: 560px) {
       body { padding: 10px; align-items: start; }
       .device {
@@ -1399,7 +1437,7 @@
         </section>
       </div>
     </section>
-    <p class="caption"><strong>Demo说明：</strong>使用上一页/下一页手动翻页；环境检测按 3 秒展示；采集阶段按 20 秒展示。</p>
+    <p class="caption"><strong>Demo说明：</strong>使用上一页/下一页手动翻页；环境检测按 3 秒展示；采集阶段按 20 秒展示；结果等待按 40 秒展示。</p>
     <div class="demo-controls" aria-label="Demo演示控制">
       <button class="demo-control-btn secondary" type="button" id="prevStep">上一页</button>
       <span class="page-indicator" id="pageIndicator">1 / 7</span>
@@ -1460,7 +1498,7 @@
         title: "采集完成",
         route: "生命体征测量",
         type: "processing",
-        duration: 4200,
+        duration: 40000,
         voice: "采集完成，请等待测量结果。",
         hint: "请等待测量结果",
         hidePrompt: true,
@@ -1575,6 +1613,7 @@
 
       if (step.type === "processing") {
         interactionEl.innerHTML = processingTemplate();
+        updateProcessing();
       }
 
       if (step.type === "continue") {
@@ -1583,6 +1622,7 @@
 
       cancelAnimationFrame(frameId);
       if (step.type === "capture") frameId = requestAnimationFrame(updateCapture);
+      if (step.type === "processing") frameId = requestAnimationFrame(updateProcessing);
       playVoiceCue(step);
     }
 
@@ -1610,6 +1650,24 @@
       if (value) value.textContent = remain;
       if (progress >= 1) return;
       frameId = requestAnimationFrame(updateCapture);
+    }
+
+    function updateProcessing() {
+      const step = FLOW[currentIndex];
+      if (!step || step.type !== "processing") return;
+      const elapsed = performance.now() - stepStartedAt;
+      const progress = Math.min(1, elapsed / step.duration);
+      const remain = Math.max(0, Math.ceil((step.duration - elapsed) / 1000));
+      const value = interactionEl.querySelector(".processing-value");
+      const segments = Array.from(interactionEl.querySelectorAll(".timer-segment"));
+      const activeCount = Math.min(segments.length, Math.max(1, Math.ceil(progress * segments.length)));
+      if (value) value.textContent = remain;
+      segments.forEach((segment, index) => {
+        segment.classList.toggle("is-active", index < activeCount);
+        segment.classList.toggle("is-current", index === activeCount - 1 && progress < 1);
+      });
+      if (progress >= 1) return;
+      frameId = requestAnimationFrame(updateProcessing);
     }
 
     function stopVoiceCues() {
@@ -1731,10 +1789,18 @@
     }
 
     function processingTemplate() {
+      const segments = Array.from({ length: 40 }, (_, index) => (
+        `<span class="timer-segment" style="--i:${index}" aria-hidden="true"></span>`
+      )).join("");
       return `
         <div class="processing-stage">
-          <div class="processing-orbit"><span>等待结果</span></div>
-          <div class="processing-dots" aria-hidden="true"><span></span><span></span><span></span></div>
+          <div class="processing-orbit" aria-label="等待测量结果，预计40秒">
+            ${segments}
+            <div class="processing-center">
+              <span class="processing-label">等待结果</span>
+              <span class="processing-time">剩余 <strong class="processing-value">40</strong> 秒</span>
+            </div>
+          </div>
         </div>
       `;
     }
