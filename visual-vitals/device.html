@@ -698,6 +698,30 @@
       font-weight: 700;
     }
 
+    .processing-dots {
+      display: flex;
+      justify-content: center;
+      gap: 10px;
+      margin-top: 28px;
+    }
+
+    .processing-dots span {
+      width: 10px;
+      height: 10px;
+      border-radius: 999px;
+      background: #15d7ff;
+      box-shadow: 0 0 18px rgba(21, 215, 255, 0.62);
+      animation: dotPulse 1.2s ease-in-out infinite;
+    }
+
+    .processing-dots span:nth-child(2) {
+      animation-delay: .16s;
+    }
+
+    .processing-dots span:nth-child(3) {
+      animation-delay: .32s;
+    }
+
     .face-frame {
       position: relative;
       width: 220px;
@@ -1280,12 +1304,14 @@
       },
       {
         key: "processing",
-        title: "正在生成结果",
+        title: "采集完成",
         route: "生命体征测量",
         type: "processing",
         duration: 4200,
-        voice: "正在生成测量结果，请稍候。",
-        prompt: ["正在生成生命体征结果", "请稍候，结果将自动保存"]
+        voice: "采集完成，请等待测量结果。",
+        hint: "请等待测量结果",
+        hidePrompt: true,
+        prompt: []
       },
       {
         key: "continue",
@@ -1328,8 +1354,8 @@
       screenEl.className = screenClasses.join(" ");
       titleEl.textContent = step.title;
       routeEl.textContent = step.route;
-      voiceHintEl.textContent = step.voice ? `语音提示：${step.voice}` : "";
-      voiceHintEl.hidden = !step.voice;
+      voiceHintEl.textContent = step.hint || (step.voice ? `语音提示：${step.voice}` : "");
+      voiceHintEl.hidden = !(step.hint || step.voice);
       promptAEl.textContent = step.prompt[0] || "";
       promptBEl.textContent = step.prompt[1] || "";
       promptAEl.hidden = !step.prompt[0];
@@ -1542,7 +1568,8 @@
     function processingTemplate() {
       return `
         <div class="processing-stage">
-          <div class="processing-orbit"><span>生成中</span></div>
+          <div class="processing-orbit"><span>等待结果</span></div>
+          <div class="processing-dots" aria-hidden="true"><span></span><span></span><span></span></div>
         </div>
       `;
     }
