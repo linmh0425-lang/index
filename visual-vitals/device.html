@@ -494,6 +494,18 @@
       animation: gazeCue 3.8s ease-in-out infinite;
     }
 
+    .turn-self .person {
+      animation: userTurnRight 3.6s ease-in-out infinite;
+    }
+
+    .turn-self .camera-node {
+      animation: cameraWaitPulse 2.2s ease-in-out infinite;
+    }
+
+    .turn-self .gaze-line {
+      animation: gazeCue 3.6s ease-in-out infinite;
+    }
+
     .countdown-number {
       display: grid;
       place-items: center;
@@ -568,6 +580,122 @@
       justify-items: center;
       gap: 14px;
       width: 100%;
+    }
+
+    .camera-check,
+    .camera-capture,
+    .processing-stage {
+      position: relative;
+      display: grid;
+      justify-items: center;
+      align-content: center;
+      gap: 18px;
+      width: 100%;
+      min-height: 340px;
+    }
+
+    .camera-core {
+      position: relative;
+      display: grid;
+      place-items: center;
+      width: 210px;
+      height: 210px;
+      border-radius: 50%;
+      background:
+        radial-gradient(circle at 50% 50%, rgba(21,215,255,0.36), rgba(31,107,255,0.24) 34%, rgba(4,12,27,0.94) 68%),
+        #061125;
+      border: 2px solid rgba(21,215,255,0.52);
+      box-shadow: 0 0 46px rgba(21,215,255,0.22), inset 0 0 34px rgba(31,107,255,0.36);
+    }
+
+    .camera-core::before {
+      content: "";
+      position: absolute;
+      inset: -22px;
+      border-radius: 50%;
+      border: 2px solid rgba(21,215,255,0.22);
+      animation: cameraPulse 1.8s ease-out infinite;
+    }
+
+    .camera-core::after {
+      content: "";
+      position: absolute;
+      width: 76px;
+      height: 76px;
+      border-radius: 50%;
+      background: radial-gradient(circle, #d9f8ff 0 12%, #15d7ff 13% 32%, #1f6bff 33% 60%, #061125 61% 100%);
+      box-shadow: 0 0 26px rgba(21,215,255,0.58);
+    }
+
+    .camera-beam {
+      position: absolute;
+      top: 96px;
+      width: 280px;
+      height: 18px;
+      border-radius: 999px;
+      background: linear-gradient(90deg, transparent, rgba(21,215,255,0.72), transparent);
+      filter: blur(1px);
+      animation: beamSweep 2.2s ease-in-out infinite;
+    }
+
+    .check-label {
+      position: relative;
+      z-index: 2;
+      margin-top: 6px;
+      padding: 8px 18px;
+      border-radius: 999px;
+      color: #c9f8ff;
+      background: rgba(21,215,255,0.12);
+      border: 1px solid rgba(21,215,255,0.32);
+      font-size: 18px;
+      font-weight: 700;
+    }
+
+    .check-dots {
+      display: inline-flex;
+      gap: 8px;
+    }
+
+    .check-dots span {
+      width: 9px;
+      height: 9px;
+      border-radius: 50%;
+      background: #15d7ff;
+      box-shadow: 0 0 14px rgba(21,215,255,0.5);
+      animation: dotPulse 1.2s ease-in-out infinite;
+    }
+
+    .check-dots span:nth-child(2) { animation-delay: 0.16s; }
+    .check-dots span:nth-child(3) { animation-delay: 0.32s; }
+
+    .processing-orbit {
+      position: relative;
+      display: grid;
+      place-items: center;
+      width: 240px;
+      height: 240px;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(31,107,255,0.28), rgba(4,12,27,0.86) 62%, transparent 64%);
+      box-shadow: 0 0 52px rgba(31,107,255,0.28);
+    }
+
+    .processing-orbit::before {
+      content: "";
+      position: absolute;
+      inset: 16px;
+      border-radius: 50%;
+      border: 8px solid rgba(255,255,255,0.08);
+      border-top-color: #15d7ff;
+      border-right-color: #15d7ff;
+      animation: spin 1.6s linear infinite;
+    }
+
+    .processing-orbit span {
+      position: relative;
+      z-index: 1;
+      color: #d8ecff;
+      font-size: 28px;
+      font-weight: 700;
     }
 
     .face-frame {
@@ -982,6 +1110,12 @@
       100% { transform: translateX(-50%) rotate(0deg); }
     }
 
+    @keyframes userTurnRight {
+      0%, 18% { transform: translateX(-50%) rotate(0deg); }
+      42%, 82% { transform: translateX(-50%) rotate(13deg); }
+      100% { transform: translateX(-50%) rotate(0deg); }
+    }
+
     @keyframes targetAnglePulse {
       0%, 100% { opacity: 0.28; transform: rotate(8deg) scale(0.96); }
       50% { opacity: 0.85; transform: rotate(24deg) scale(1.02); }
@@ -1035,6 +1169,16 @@
       45% { height: 32px; opacity: 1; }
     }
 
+    @keyframes beamSweep {
+      0%, 100% { transform: translateY(-62px) scaleX(0.76); opacity: 0.34; }
+      50% { transform: translateY(62px) scaleX(1); opacity: 1; }
+    }
+
+    @keyframes dotPulse {
+      0%, 100% { opacity: 0.34; transform: translateY(0); }
+      50% { opacity: 1; transform: translateY(-4px); }
+    }
+
     @media (max-width: 560px) {
       body { padding: 10px; align-items: start; }
       .device {
@@ -1078,7 +1222,7 @@
         </section>
       </div>
     </section>
-    <p class="caption"><strong>Demo说明：</strong>使用上一页/下一页手动翻页；采集阶段按 20 秒展示；复位后进入是否继续测量页。</p>
+    <p class="caption"><strong>Demo说明：</strong>使用上一页/下一页手动翻页；环境检测按 3 秒展示；采集阶段按 20 秒展示。</p>
     <div class="demo-controls" aria-label="Demo演示控制">
       <button class="demo-control-btn secondary" type="button" id="prevStep">上一页</button>
       <span class="page-indicator" id="pageIndicator">1 / 7</span>
@@ -1107,14 +1251,23 @@
         prompt: ["请站上转台", "双手垂放，自然站立，保持静止"]
       },
       {
-        key: "positioning",
-        title: "转台即将右转",
+        key: "turn-camera",
+        title: "请转向右侧镜头",
         route: "生命体征测量",
         type: "human",
-        className: "prepare-turn camera-visible",
-        duration: 4200,
-        voice: "转台开始旋转，转台停止后请看向右侧镜头。",
-        prompt: ["转台即将向右旋转10°后停止", "请保持静止，转台停止后请看向右侧镜头"]
+        className: "turn-self camera-visible",
+        duration: 6000,
+        voice: "请向右转身，正面看向右侧镜头。请勿佩戴眼镜、口罩或帽子，保持脸部无遮挡。",
+        prompt: ["请向右转身，正面看向右侧镜头", "请勿佩戴眼镜、口罩或帽子，保持脸部无遮挡"]
+      },
+      {
+        key: "environment",
+        title: "正在检测环境",
+        route: "生命体征测量",
+        type: "environment",
+        duration: 3000,
+        voice: "正在检测采集环境，请持续看向右侧镜头并保持静止。",
+        prompt: ["请持续看向右侧镜头", "保持静止"]
       },
       {
         key: "capturing",
@@ -1122,27 +1275,17 @@
         route: "生命体征测量",
         type: "capture",
         duration: 20000,
-        voice: "开始采集，请持续看向镜头20秒。滴声提示将持续20秒。",
-        prompt: ["请持续看向镜头20秒", "保持静止，避免说话和表情明显浮动"]
+        voice: "开始采集，请持续看向右侧镜头20秒。滴声提示将持续20秒。",
+        prompt: ["请持续看向右侧镜头20秒", "保持静止，避免说话和表情明显浮动"]
       },
       {
-        key: "captured",
-        title: "采集完成",
+        key: "processing",
+        title: "正在生成结果",
         route: "生命体征测量",
-        type: "done",
-        duration: 2500,
-        voice: "采集完成",
-        prompt: ["请继续保持静止，等待转台复位", ""]
-      },
-      {
-        key: "resetting",
-        title: "转台复位中",
-        route: "生命体征测量",
-        type: "human",
-        className: "resetting",
-        duration: 6000,
-        voice: "转台正在复位，请注意安全",
-        prompt: ["转台正在复位中", "请保持静止"]
+        type: "processing",
+        duration: 4200,
+        voice: "正在生成测量结果，请稍候。",
+        prompt: ["正在生成生命体征结果", "请稍候，结果将自动保存"]
       },
       {
         key: "continue",
@@ -1194,7 +1337,11 @@
       pageIndicatorEl.textContent = `${currentIndex + 1} / ${FLOW.length}`;
       interactionEl.className = "interaction";
 
-      if (step.className) interactionEl.classList.add(step.className);
+      if (step.className) {
+        step.className.split(/\s+/).filter(Boolean).forEach((name) => {
+          interactionEl.classList.add(name);
+        });
+      }
 
       if (step.type === "selection") {
         interactionEl.innerHTML = `
@@ -1235,12 +1382,20 @@
         updateCapture();
       }
 
+      if (step.type === "environment") {
+        interactionEl.innerHTML = environmentTemplate();
+      }
+
       if (step.type === "done") {
         interactionEl.innerHTML = `<div class="done-mark">✓</div>`;
       }
 
       if (step.type === "success") {
         interactionEl.innerHTML = `<div class="done-mark">✓</div>`;
+      }
+
+      if (step.type === "processing") {
+        interactionEl.innerHTML = processingTemplate();
       }
 
       if (step.type === "continue") {
@@ -1341,7 +1496,6 @@
         <div class="human-stage">
           <div class="glow"></div>
           <div class="turntable"></div>
-          <div class="turn-direction"><span>右转10°</span></div>
           <div class="person" aria-hidden="true">
             <div class="head"></div>
             <div class="body"></div>
@@ -1360,18 +1514,35 @@
 
     function captureTemplate() {
       return `
-        <div class="face-capture">
-          <div class="face-frame" aria-label="面部识别框">
-            <div class="face-scan-line"></div>
-            <div class="face-corners" aria-hidden="true">
-              <span></span><span></span><span></span><span></span>
-            </div>
+        <div class="camera-capture">
+          <div class="camera-core" aria-label="右侧镜头采集中">
+            <div class="camera-beam"></div>
           </div>
           <div class="signal-strip" aria-hidden="true">
             <span></span><span></span><span></span><span></span><span></span><span></span>
           </div>
           <div class="capture-progress"><div class="capture-progress-bar"></div></div>
           <div class="capture-time">剩余 <span class="capture-value">20</span> 秒</div>
+        </div>
+      `;
+    }
+
+    function environmentTemplate() {
+      return `
+        <div class="camera-check">
+          <div class="camera-core" aria-label="采集环境检测中">
+            <div class="camera-beam"></div>
+          </div>
+          <div class="check-label">检测环境中</div>
+          <div class="check-dots" aria-hidden="true"><span></span><span></span><span></span></div>
+        </div>
+      `;
+    }
+
+    function processingTemplate() {
+      return `
+        <div class="processing-stage">
+          <div class="processing-orbit"><span>生成中</span></div>
         </div>
       `;
     }
