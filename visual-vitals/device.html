@@ -668,6 +668,26 @@
     .check-dots span:nth-child(2) { animation-delay: 0.16s; }
     .check-dots span:nth-child(3) { animation-delay: 0.32s; }
 
+    .environment-video-shell {
+      position: relative;
+      display: grid;
+      place-items: center;
+      width: 240px;
+      height: 240px;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(21,215,255,0.14), rgba(4,12,27,0.86) 66%, transparent 68%);
+      box-shadow: 0 0 52px rgba(21,215,255,0.16);
+    }
+
+    .environment-video {
+      width: 220px;
+      height: 220px;
+      border-radius: 50%;
+      object-fit: cover;
+      mix-blend-mode: screen;
+      filter: drop-shadow(0 0 20px rgba(21,215,255,0.28));
+    }
+
     .processing-orbit {
       position: relative;
       display: grid;
@@ -1701,8 +1721,8 @@
     function environmentTemplate() {
       return `
         <div class="camera-check">
-          <div class="camera-core" aria-label="采集环境检测中">
-            <div class="camera-beam"></div>
+          <div class="environment-video-shell" aria-label="采集环境检测中">
+            <video class="environment-video" src="assets/environment-scan-animation.mp4" autoplay muted loop playsinline preload="auto"></video>
           </div>
           <div class="check-label">检测环境中</div>
           <div class="check-dots" aria-hidden="true"><span></span><span></span><span></span></div>
