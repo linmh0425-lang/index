@@ -80,6 +80,10 @@
       grid-template-rows: 58px 144px minmax(0, 1fr) 196px;
     }
 
+    .screen--processing {
+      grid-template-rows: 58px 128px minmax(0, 1fr) 172px;
+    }
+
     .status-bar {
       display: flex;
       align-items: center;
@@ -721,32 +725,41 @@
       animation: resultGlow 2.8s ease-in-out infinite;
     }
 
-    .processing-center {
+    .processing-avatar {
       position: relative;
       z-index: 3;
       display: grid;
       place-items: center;
-      gap: 8px;
-      color: #d8ecff;
-      text-align: center;
+      width: 76px;
+      height: 76px;
+      border-radius: 50%;
+      background:
+        radial-gradient(circle at 50% 48%, rgba(21,215,255,0.28), rgba(31,107,255,0.16) 52%, rgba(4,12,27,0.82) 72%),
+        rgba(6,23,52,0.9);
+      border: 1px solid rgba(21,215,255,0.22);
+      box-shadow: inset 0 0 24px rgba(31,107,255,0.38), 0 0 26px rgba(21,215,255,0.18);
     }
 
-    .processing-label {
-      font-size: 24px;
-      font-weight: 700;
+    .processing-avatar::before {
+      content: "";
+      position: absolute;
+      top: 21px;
+      width: 16px;
+      height: 16px;
+      border-radius: 50%;
+      background: linear-gradient(180deg, #bff5ff, #17baff 72%, #1f6bff);
+      box-shadow: 0 0 16px rgba(21,215,255,0.52);
     }
 
-    .processing-time {
-      color: #79b2ff;
-      font-size: 16px;
-      line-height: 1.2;
-    }
-
-    .processing-time strong {
-      color: #fff;
-      font-size: 32px;
-      font-weight: 700;
-      line-height: 1;
+    .processing-avatar::after {
+      content: "";
+      position: absolute;
+      top: 39px;
+      width: 36px;
+      height: 19px;
+      border-radius: 18px 18px 12px 12px;
+      background: linear-gradient(180deg, #a4efff, #14b9ff 68%, #1f6bff);
+      box-shadow: 0 0 18px rgba(21,215,255,0.46);
     }
 
     .timer-segment {
@@ -1062,6 +1075,27 @@
 
     .screen--no-prompt .prompt {
       display: none;
+    }
+
+    .screen--processing .interaction {
+      min-height: 0;
+      align-items: center;
+      padding-bottom: 10px;
+    }
+
+    .screen--processing .prompt {
+      margin-bottom: 24px;
+      padding: 42px 24px 26px 66px;
+      min-height: 112px;
+    }
+
+    .screen--processing .prompt-line {
+      font-size: 22px;
+      line-height: 1.36;
+    }
+
+    .screen--processing .prompt-line::before {
+      top: 12px;
     }
 
     .screen--continue {
@@ -1555,8 +1589,7 @@
         duration: 40000,
         voice: "采集完成，请等待测量结果。",
         hint: "请等待测量结果",
-        hidePrompt: true,
-        prompt: []
+        prompt: ["请等待测量结果...", ""]
       },
       {
         key: "continue",
@@ -1594,6 +1627,7 @@
       const screenClasses = ["screen"];
       if (step.type === "selection") screenClasses.push("screen--selection");
       if (step.type === "capture") screenClasses.push("screen--capture");
+      if (step.type === "processing") screenClasses.push("screen--processing");
       if (step.type === "continue") screenClasses.push("screen--continue");
       if (step.hidePrompt) screenClasses.push("screen--no-prompt");
       screenEl.className = screenClasses.join(" ");
@@ -1711,11 +1745,8 @@
       if (!step || step.type !== "processing") return;
       const elapsed = performance.now() - stepStartedAt;
       const progress = Math.min(1, elapsed / step.duration);
-      const remain = Math.max(0, Math.ceil((step.duration - elapsed) / 1000));
-      const value = interactionEl.querySelector(".processing-value");
       const segments = Array.from(interactionEl.querySelectorAll(".timer-segment"));
       const activeCount = Math.min(segments.length, Math.max(1, Math.ceil(progress * segments.length)));
-      if (value) value.textContent = remain;
       segments.forEach((segment, index) => {
         segment.classList.toggle("is-active", index < activeCount);
         segment.classList.toggle("is-current", index === activeCount - 1 && progress < 1);
@@ -1869,10 +1900,7 @@
         <div class="processing-stage">
           <div class="processing-orbit" aria-label="等待测量结果，预计40秒">
             ${segments}
-            <div class="processing-center">
-              <span class="processing-label">等待结果</span>
-              <span class="processing-time">剩余 <strong class="processing-value">40</strong> 秒</span>
-            </div>
+            <div class="processing-avatar" aria-hidden="true"></div>
           </div>
         </div>
       `;
