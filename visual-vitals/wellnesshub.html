@@ -407,7 +407,7 @@
     }
     .trend-grid {
       display: grid;
-      grid-template-columns: repeat(3, minmax(0, 1fr));
+      grid-template-columns: repeat(2, minmax(0, 1fr));
       gap: 14px;
     }
     .trend-card {
@@ -493,7 +493,7 @@
           </div>
           <div class="score-note">
             <span class="note-icon">!</span>
-            <p>血氧处于偏低范围，血压参考处于正常偏高范围。结果仅用于健康参考和趋势观察。</p>
+            <p>血氧处于偏低范围。结果仅用于健康参考和趋势观察。</p>
           </div>
         </div>
       </aside>
@@ -564,18 +564,6 @@
               </td>
               <td><span class="status low">偏低</span></td>
             </tr>
-            <tr>
-              <td><span class="metric-name">血压参考 <span class="help-tip" tabindex="0" title="基于视觉生命体征估算的收缩压/舒张压参考值，仅用于趋势观察。" data-tip="基于视觉生命体征估算的收缩压/舒张压参考值，仅用于趋势观察。">?</span></span><span class="name-muted">mmHg</span></td>
-              <td><span class="value">117/89 <span class="delta up">↑2/↑1</span></span></td>
-              <td>
-                <div class="position">
-                  <div class="scale-labels"><span style="--x:12.31%">90/60</span><span style="--x:36.92%">120/80</span><span style="--x:53.85%">140/90</span><span style="--x:69.23%">160/100</span><span style="--x:84.62%">180/110</span></div>
-                  <div class="bar" style="--cols: .8fr 1.6fr 1.1fr 1fr 1fr 1fr; --pos: 53%;"><span class="seg blue"></span><span class="seg green"></span><span class="seg yellow"></span><span class="seg orange"></span><span class="seg red"></span><span class="seg deepred"></span><span class="marker"></span></div>
-                  <div class="scale-caption" style="--cols: .8fr 1.6fr 1.1fr 1fr 1fr 1fr;"><span>偏低</span><span>正常</span><span>正常偏高</span><span>轻度关注</span><span>中度关注</span><span>重点关注</span></div>
-                </div>
-              </td>
-              <td><span class="status watch">正常偏高</span></td>
-            </tr>
           </tbody>
         </table>
       </div>
@@ -583,7 +571,7 @@
     <section class="trend-panel" aria-label="趋势变化">
       <div class="trend-head">
         <span>趋势变化</span>
-        <small>仅展示静息心率、HRV-SDNN、血压参考</small>
+        <small>仅展示静息心率、HRV-SDNN</small>
       </div>
       <div class="trend-grid">
         <article class="trend-card">
@@ -609,20 +597,6 @@
             <circle class="trend-dot" cx="10" cy="31" r="3" /><circle class="trend-dot" cx="57" cy="29" r="3" /><circle class="trend-dot" cx="104" cy="42" r="3" /><circle class="trend-dot" cx="151" cy="36" r="3" /><circle class="trend-dot" cx="198" cy="48" r="3" /><circle class="trend-dot" cx="245" cy="45" r="3" /><circle class="trend-dot" cx="290" cy="52" r="3" />
           </svg>
           <div class="trend-labels"><span>08/01</span><span>08/02</span><span>08/03</span><span>08/04</span><span>08/05</span><span>08/06</span><span>08/07</span></div>
-        </article>
-        <article class="trend-card">
-          <div class="trend-title-row">
-            <span class="trend-name">血压参考 mmHg</span>
-          </div>
-          <svg class="trend-chart" viewBox="0 0 300 76" role="img" aria-label="血压趋势">
-            <path class="trend-axis" d="M10 14H290M10 38H290M10 62H290" />
-            <path class="trend-line" d="M10 28L57 24L104 29L151 22L198 26L245 25L290 21" />
-            <path class="trend-line alt" d="M10 52L57 50L104 48L151 45L198 47L245 44L290 42" />
-            <circle class="trend-dot" cx="10" cy="28" r="3" /><circle class="trend-dot" cx="57" cy="24" r="3" /><circle class="trend-dot" cx="104" cy="29" r="3" /><circle class="trend-dot" cx="151" cy="22" r="3" /><circle class="trend-dot" cx="198" cy="26" r="3" /><circle class="trend-dot" cx="245" cy="25" r="3" /><circle class="trend-dot" cx="290" cy="21" r="3" />
-            <circle class="trend-dot alt" cx="10" cy="52" r="3" /><circle class="trend-dot alt" cx="57" cy="50" r="3" /><circle class="trend-dot alt" cx="104" cy="48" r="3" /><circle class="trend-dot alt" cx="151" cy="45" r="3" /><circle class="trend-dot alt" cx="198" cy="47" r="3" /><circle class="trend-dot alt" cx="245" cy="44" r="3" /><circle class="trend-dot alt" cx="290" cy="42" r="3" />
-          </svg>
-          <div class="trend-labels"><span>08/01</span><span>08/02</span><span>08/03</span><span>08/04</span><span>08/05</span><span>08/06</span><span>08/07</span></div>
-          <div class="trend-legend"><span><i style="--c:#4ca3ff"></i>收缩压</span><span><i style="--c:#21b987"></i>舒张压</span></div>
         </article>
       </div>
     </section>

@@ -358,7 +358,7 @@
     }
     .history-grid {
       display: grid;
-      grid-template-columns: repeat(3, 1fr);
+      grid-template-columns: repeat(2, 1fr);
       gap: 0;
       border: 1.5px solid var(--brand);
       border-right: 0;
@@ -461,7 +461,7 @@
           </div>
           <div class="score-note">
             <span class="note-icon">!</span>
-            <p>血氧处于偏低范围，血压参考处于正常偏高范围。结果仅用于健康参考和趋势观察。</p>
+            <p>血氧处于偏低范围。结果仅用于健康参考和趋势观察。</p>
           </div>
         </div>
       </section>
@@ -542,19 +542,6 @@
             <td><span class="tag low">偏低</span></td>
             <td><span class="vital-delta"><span class="down">↓ 1</span></span></td>
           </tr>
-          <tr>
-            <td>血压参考 mmHg</td>
-            <td>117/89</td>
-            <td>
-              <div class="range-cell" style="--cols: .8fr 1.6fr 1.1fr 1fr 1fr 1fr;">
-                <div class="range-ticks"><span style="--x:12.31%">90/60</span><span style="--x:36.92%">120/80</span><span style="--x:53.85%">140/90</span><span style="--x:69.23%">160/100</span><span style="--x:84.62%">180/110</span></div>
-                <div class="range-line" style="--pos: 53%;"><span class="seg blue"></span><span class="seg green"></span><span class="seg yellow"></span><span class="seg orange"></span><span class="seg red"></span><span class="seg deepred"></span><i class="range-marker" data-value=""></i></div>
-                <div class="range-labels"><span>偏低</span><span>正常</span><span>正常<br>偏高</span><span>轻度<br>关注</span><span>中度<br>关注</span><span>重点<br>关注</span></div>
-              </div>
-            </td>
-            <td><span class="tag watch">正常偏高</span></td>
-            <td><span class="vital-delta"><span class="up">↑ 2/↑ 1</span></span></td>
-          </tr>
         </tbody>
       </table>
       <h2 class="section-title">历史趋势</h2>
@@ -578,18 +565,6 @@
             <circle class="history-dot" cx="8" cy="30" r="2.5" /><circle class="history-dot" cx="42" cy="28" r="2.5" /><circle class="history-dot" cx="76" cy="41" r="2.5" /><circle class="history-dot" cx="110" cy="35" r="2.5" /><circle class="history-dot" cx="144" cy="47" r="2.5" /><circle class="history-dot" cx="178" cy="44" r="2.5" /><circle class="history-dot" cx="212" cy="51" r="2.5" />
           </svg>
           <div class="history-labels"><span>08/01</span><span>08/02</span><span>08/03</span><span>08/04</span><span>08/05</span><span>08/06</span><span>08/07</span></div>
-        </article>
-        <article class="history-card">
-          <div class="history-title"><span>血压参考 mmHg</span></div>
-          <svg class="history-chart" viewBox="0 0 220 72" role="img" aria-label="血压历史趋势">
-            <path class="history-axis" d="M8 13H212M8 36H212M8 59H212" />
-            <path class="history-line" d="M8 27L42 23L76 28L110 22L144 26L178 25L212 21" />
-            <path class="history-line alt" d="M8 51L42 49L76 47L110 44L144 46L178 43L212 41" />
-            <circle class="history-dot" cx="8" cy="27" r="2.5" /><circle class="history-dot" cx="42" cy="23" r="2.5" /><circle class="history-dot" cx="76" cy="28" r="2.5" /><circle class="history-dot" cx="110" cy="22" r="2.5" /><circle class="history-dot" cx="144" cy="26" r="2.5" /><circle class="history-dot" cx="178" cy="25" r="2.5" /><circle class="history-dot" cx="212" cy="21" r="2.5" />
-            <circle class="history-dot alt" cx="8" cy="51" r="2.5" /><circle class="history-dot alt" cx="42" cy="49" r="2.5" /><circle class="history-dot alt" cx="76" cy="47" r="2.5" /><circle class="history-dot alt" cx="110" cy="44" r="2.5" /><circle class="history-dot alt" cx="144" cy="46" r="2.5" /><circle class="history-dot alt" cx="178" cy="43" r="2.5" /><circle class="history-dot alt" cx="212" cy="41" r="2.5" />
-          </svg>
-          <div class="history-labels"><span>08/01</span><span>08/02</span><span>08/03</span><span>08/04</span><span>08/05</span><span>08/06</span><span>08/07</span></div>
-          <div class="history-legend"><span><i style="--c:#4f91ff"></i>收缩压</span><span><i style="--c:#37c789"></i>舒张压</span></div>
         </article>
       </section>
       <div class="small-note">说明：生命体征健康参考状态基于本次视觉生命体征测量结果生成，仅用于健康参考和趋势观察，不作为医学诊断依据。低置信度测量不输出结果，应提示重新测量。</div>
