@@ -1525,10 +1525,10 @@
         </section>
       </div>
     </section>
-    <p class="caption"><strong>Demo说明：</strong>使用上一页/下一页手动翻页；环境检测按 3 秒展示；采集阶段按 20 秒展示；结果等待按 40 秒展示。</p>
+    <p class="caption"><strong>Demo说明：</strong>使用上一页/下一页手动翻页；转台定位、环境检测、采集、转台复位、结果等待按设定时长展示。</p>
     <div class="demo-controls" aria-label="Demo演示控制">
       <button class="demo-control-btn secondary" type="button" id="prevStep">上一页</button>
-      <span class="page-indicator" id="pageIndicator">1 / 7</span>
+      <span class="page-indicator" id="pageIndicator">1 / 8</span>
       <button class="demo-control-btn" type="button" id="nextStep">下一页</button>
     </div>
   </main>
@@ -1554,14 +1554,14 @@
         prompt: ["请站上转台", "双手垂放，自然站立，保持静止"]
       },
       {
-        key: "turn-camera",
-        title: "请面向右侧镜头",
+        key: "positioning",
+        title: "转台即将右转",
         route: "生命体征测量",
         type: "human",
-        className: "turn-self camera-visible",
+        className: "prepare-turn camera-visible",
         duration: 6000,
-        voice: "请向右转身，面向右侧镜头。请勿佩戴眼镜、口罩或帽子，保持脸部无遮挡。",
-        prompt: ["请向右转身，面向右侧镜头", "请勿佩戴眼镜、口罩或帽子，保持脸部无遮挡"]
+        voice: "转台开始旋转，转台停止后请看向右侧镜头。",
+        prompt: ["转台即将向右旋转10°后停止", "请保持静止，转台停止后请看向右侧镜头"]
       },
       {
         key: "environment",
@@ -1580,6 +1580,16 @@
         duration: 20000,
         voice: "开始采集，请持续看向右侧镜头20秒。滴声提示将持续20秒。",
         prompt: ["请持续看向右侧镜头20秒", "保持静止，避免说话和表情明显浮动"]
+      },
+      {
+        key: "resetting",
+        title: "转台复位中",
+        route: "生命体征测量",
+        type: "human",
+        className: "resetting",
+        duration: 5000,
+        voice: "转台正在复位，请保持静止。",
+        prompt: ["转台正在复位中", "请保持静止"]
       },
       {
         key: "processing",
