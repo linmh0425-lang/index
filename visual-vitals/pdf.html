@@ -324,16 +324,6 @@
     .vital-delta .up { color: #247cff; }
     .vital-delta .down { color: #5f8ff8; }
     .vital-delta .flat { color: #8aa9d7; }
-    tbody tr:nth-child(3) td:last-child .vital-delta,
-    tbody tr:nth-child(4) td:last-child .vital-delta,
-    tbody tr:nth-child(5) td:last-child .vital-delta { display: none; }
-    tbody tr:nth-child(3) td:last-child::after,
-    tbody tr:nth-child(4) td:last-child::after,
-    tbody tr:nth-child(5) td:last-child::after {
-      content: "--";
-      color: #8aa9d7;
-      font-weight: 700;
-    }
     .tag {
       display: inline-block;
       min-width: 54px;
@@ -358,7 +348,7 @@
     }
     .history-grid {
       display: grid;
-      grid-template-columns: repeat(2, 1fr);
+      grid-template-columns: repeat(3, 1fr);
       gap: 0;
       border: 1.5px solid var(--brand);
       border-right: 0;
@@ -384,9 +374,12 @@
     .history-axis { stroke: #d8e6f2; stroke-width: 1; }
     .history-line { fill: none; stroke: #4f91ff; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
     .history-line.alt { stroke: #37c789; }
+    .history-line.pressure { stroke: #e5b62b; }
     .history-fill { fill: rgba(79, 145, 255, .1); }
+    .history-fill.pressure { fill: rgba(229, 182, 43, .12); }
     .history-dot { fill: #fff; stroke: #4f91ff; stroke-width: 1.6; }
     .history-dot.alt { stroke: #37c789; }
+    .history-dot.pressure { stroke: #e5b62b; }
     .history-labels {
       display: flex;
       justify-content: space-between;
@@ -509,12 +502,12 @@
             <td>
               <div class="range-cell" style="--cols: .7fr .5fr 1.2fr 1.7fr 1.3fr 1fr;">
                 <div class="range-ticks"><span style="--x:10.94%">30</span><span style="--x:18.75%">50</span><span style="--x:37.5%">150</span><span style="--x:64.06%">500</span><span style="--x:84.38%">900</span></div>
-                <div class="range-line" style="--pos: 33.38%;"><span class="seg purple"></span><span class="seg blue"></span><span class="seg green"></span><span class="seg yellow"></span><span class="seg orange"></span><span class="seg deepred"></span><i class="range-marker" data-value=""></i></div>
+                <div class="range-line" style="--pos: 33.38%;"><span class="seg purple"></span><span class="seg blue"></span><span class="seg green"></span><span class="seg yellow"></span><span class="seg orange"></span><span class="seg deepred"></span><i class="range-marker" data-value="128"></i></div>
                 <div class="range-labels"><span>放松</span><span>低压力</span><span>正常<br>压力</span><span>压力<br>偏高</span><span>高压力</span><span>极高<br>压力</span></div>
               </div>
             </td>
             <td><span class="tag">正常压力</span></td>
-            <td><span class="vital-delta"><span class="flat">--</span></span></td>
+            <td><span class="vital-delta"><span class="up">↑ 18</span></span></td>
           </tr>
           <tr>
             <td>呼吸频率 次/分钟</td>
@@ -563,6 +556,16 @@
             <path class="history-fill" d="M8 30L42 28L76 41L110 35L144 47L178 44L212 51L212 61L8 61Z" />
             <path class="history-line" d="M8 30L42 28L76 41L110 35L144 47L178 44L212 51" />
             <circle class="history-dot" cx="8" cy="30" r="2.5" /><circle class="history-dot" cx="42" cy="28" r="2.5" /><circle class="history-dot" cx="76" cy="41" r="2.5" /><circle class="history-dot" cx="110" cy="35" r="2.5" /><circle class="history-dot" cx="144" cy="47" r="2.5" /><circle class="history-dot" cx="178" cy="44" r="2.5" /><circle class="history-dot" cx="212" cy="51" r="2.5" />
+          </svg>
+          <div class="history-labels"><span>08/01</span><span>08/02</span><span>08/03</span><span>08/04</span><span>08/05</span><span>08/06</span><span>08/07</span></div>
+        </article>
+        <article class="history-card">
+          <div class="history-title"><span>压力指数</span></div>
+          <svg class="history-chart" viewBox="0 0 220 72" role="img" aria-label="压力指数历史趋势">
+            <path class="history-axis" d="M8 13H212M8 36H212M8 59H212" />
+            <path class="history-fill pressure" d="M8 49L42 45L76 41L110 37L144 43L178 34L212 30L212 61L8 61Z" />
+            <path class="history-line pressure" d="M8 49L42 45L76 41L110 37L144 43L178 34L212 30" />
+            <circle class="history-dot pressure" cx="8" cy="49" r="2.5" /><circle class="history-dot pressure" cx="42" cy="45" r="2.5" /><circle class="history-dot pressure" cx="76" cy="41" r="2.5" /><circle class="history-dot pressure" cx="110" cy="37" r="2.5" /><circle class="history-dot pressure" cx="144" cy="43" r="2.5" /><circle class="history-dot pressure" cx="178" cy="34" r="2.5" /><circle class="history-dot pressure" cx="212" cy="30" r="2.5" />
           </svg>
           <div class="history-labels"><span>08/01</span><span>08/02</span><span>08/03</span><span>08/04</span><span>08/05</span><span>08/06</span><span>08/07</span></div>
         </article>

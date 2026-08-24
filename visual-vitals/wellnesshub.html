@@ -200,8 +200,6 @@
     .delta { color: #8a98aa; font-size: 13px; font-weight: 800; }
     .delta.up { color: #21b987; }
     .delta.down { color: #68788e; }
-    .vital-table tbody tr:nth-child(3) .delta,
-    .vital-table tbody tr:nth-child(4) .delta { display: none; }
     .status {
       display: inline-flex;
       align-items: center;
@@ -407,7 +405,7 @@
     }
     .trend-grid {
       display: grid;
-      grid-template-columns: repeat(2, minmax(0, 1fr));
+      grid-template-columns: repeat(3, minmax(0, 1fr));
       gap: 14px;
     }
     .trend-card {
@@ -433,10 +431,13 @@
     }
     .trend-axis { stroke: #d9e3ef; stroke-width: 1; }
     .trend-fill { fill: rgba(32, 141, 255, .12); }
+    .trend-fill.pressure { fill: rgba(229, 182, 43, .14); }
     .trend-line { fill: none; stroke: #4ca3ff; stroke-width: 2.4; stroke-linecap: round; stroke-linejoin: round; }
     .trend-line.alt { stroke: #21b987; }
+    .trend-line.pressure { stroke: #e5b62b; }
     .trend-dot { fill: #fff; stroke: #4ca3ff; stroke-width: 2; }
     .trend-dot.alt { stroke: #21b987; }
+    .trend-dot.pressure { stroke: #e5b62b; }
     .trend-labels {
       display: flex;
       justify-content: space-between;
@@ -530,7 +531,7 @@
             </tr>
             <tr>
               <td><span class="metric-name">压力指数 <span class="help-tip" tabindex="0" title="基于视觉相机提取的连续PP间期序列，按Baevsky Stress Index公式计算的生理压力参考值。" data-tip="基于视觉相机提取的连续PP间期序列，按Baevsky Stress Index公式计算的生理压力参考值，仅用于健康趋势观察。">?</span></span></td>
-              <td><span class="value">128</span></td>
+              <td><span class="value">128 <span class="delta up">↑ 18</span></span></td>
               <td>
                 <div class="position">
                   <div class="scale-labels"><span style="--x:10.94%">30</span><span style="--x:18.75%">50</span><span style="--x:37.5%">150</span><span style="--x:64.06%">500</span><span style="--x:84.38%">900</span></div>
@@ -571,7 +572,7 @@
     <section class="trend-panel" aria-label="趋势变化">
       <div class="trend-head">
         <span>趋势变化</span>
-        <small>仅展示静息心率、HRV-SDNN</small>
+        <small>仅展示静息心率、HRV-SDNN、压力指数</small>
       </div>
       <div class="trend-grid">
         <article class="trend-card">
@@ -595,6 +596,18 @@
             <path class="trend-fill" d="M10 31L57 29L104 42L151 36L198 48L245 45L290 52L290 64L10 64Z" />
             <path class="trend-line" d="M10 31L57 29L104 42L151 36L198 48L245 45L290 52" />
             <circle class="trend-dot" cx="10" cy="31" r="3" /><circle class="trend-dot" cx="57" cy="29" r="3" /><circle class="trend-dot" cx="104" cy="42" r="3" /><circle class="trend-dot" cx="151" cy="36" r="3" /><circle class="trend-dot" cx="198" cy="48" r="3" /><circle class="trend-dot" cx="245" cy="45" r="3" /><circle class="trend-dot" cx="290" cy="52" r="3" />
+          </svg>
+          <div class="trend-labels"><span>08/01</span><span>08/02</span><span>08/03</span><span>08/04</span><span>08/05</span><span>08/06</span><span>08/07</span></div>
+        </article>
+        <article class="trend-card">
+          <div class="trend-title-row">
+            <span class="trend-name">压力指数</span>
+          </div>
+          <svg class="trend-chart" viewBox="0 0 300 76" role="img" aria-label="压力指数趋势">
+            <path class="trend-axis" d="M10 14H290M10 38H290M10 62H290" />
+            <path class="trend-fill pressure" d="M10 50L57 46L104 42L151 38L198 44L245 35L290 31L290 64L10 64Z" />
+            <path class="trend-line pressure" d="M10 50L57 46L104 42L151 38L198 44L245 35L290 31" />
+            <circle class="trend-dot pressure" cx="10" cy="50" r="3" /><circle class="trend-dot pressure" cx="57" cy="46" r="3" /><circle class="trend-dot pressure" cx="104" cy="42" r="3" /><circle class="trend-dot pressure" cx="151" cy="38" r="3" /><circle class="trend-dot pressure" cx="198" cy="44" r="3" /><circle class="trend-dot pressure" cx="245" cy="35" r="3" /><circle class="trend-dot pressure" cx="290" cy="31" r="3" />
           </svg>
           <div class="trend-labels"><span>08/01</span><span>08/02</span><span>08/03</span><span>08/04</span><span>08/05</span><span>08/06</span><span>08/07</span></div>
         </article>
