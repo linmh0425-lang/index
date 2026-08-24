@@ -94,8 +94,13 @@
       font-weight: 900;
     }
     .section-title small {
-      color: #1263ff;
-      font-size: 14px;
+      color: #6f7d91;
+      font-size: 12px;
+      font-weight: 800;
+    }
+    .condition-note {
+      color: #6f7d91;
+      font-size: 12px;
       font-weight: 800;
     }
     .sub-title {
@@ -388,6 +393,17 @@
       background: #f9fbfe;
       padding: 18px 20px 16px;
     }
+    .medical-note {
+      margin-top: 14px;
+      margin-left: 444px;
+      padding: 10px 12px;
+      border: 1px solid #d9e6f3;
+      border-radius: 2px;
+      background: #fbfdff;
+      color: #6f7d91;
+      font-size: 12px;
+      line-height: 1.7;
+    }
     .trend-head {
       display: flex;
       align-items: center;
@@ -478,7 +494,10 @@
     <nav class="tabs" aria-label="报告类型">
       <div class="tab">身体成分</div><div class="tab">体态评估</div><div class="tab">脊柱评估</div><div class="tab">体围测量</div><div class="tab">平衡评估</div><div class="tab">肩部功能</div><div class="tab">颈部功能</div><div class="tab">热态测量</div><div class="tab active">生命体征</div>
     </nav>
-    <div class="section-title">生命体征评估</div>
+    <div class="section-title">
+      <span>生命体征评估</span>
+      <small class="condition-note">为保证测量结果稳定性，需保持面部无遮挡、身体静止！</small>
+    </div>
     <section class="page-grid">
       <aside class="summary-col">
         <div class="score-card">
@@ -613,6 +632,7 @@
         </article>
       </div>
     </section>
+    <div class="medical-note">生命体征测量结果仅用于健康参考和趋势观察，不作为医学诊断依据。</div>
   </main>
 </body>
 </html>

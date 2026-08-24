@@ -131,11 +131,31 @@
       color: var(--muted);
       font-size: 15px;
     }
+    .condition-strip {
+      margin: -2px 0 14px;
+      padding: 10px 12px;
+      border: 1px solid rgba(71,166,224,.54);
+      border-radius: 6px;
+      background: rgba(16,42,81,.66);
+      color: #c7d3e9;
+      font-size: 13px;
+      line-height: 1.5;
+    }
     .compare-box,
     .metric-card {
       border: 1px solid var(--line);
       background: rgba(16,36,73,.78);
       box-shadow: inset 0 0 28px rgba(30,99,164,.1);
+    }
+    .medical-note {
+      margin-top: 18px;
+      padding: 11px 12px;
+      border: 1px solid rgba(71,166,224,.45);
+      border-radius: 6px;
+      background: rgba(16,36,73,.72);
+      color: #9fb4d1;
+      font-size: 12px;
+      line-height: 1.6;
     }
     .summary-card {
       --score-percent: 68%;
@@ -541,6 +561,7 @@
         <div class="user-name">一二三四五六七八九十 <span class="male">♂</span></div>
         <div class="user-grid"><span>身高：175 cm</span><span>年龄：36 岁</span></div>
       </div>
+      <div class="condition-strip">为保证测量结果稳定性，需保持面部无遮挡、身体静止！</div>
       <section class="summary-card">
         <div class="score-panel-title"><span>生命体征健康参考状态</span></div>
         <div class="gauge-shell">
@@ -608,9 +629,10 @@
         <div class="range">
           <div class="range-nums"><span style="--x:22.22%">12</span><span style="--x:77.78%">20</span></div>
           <div class="range-bar" style="--cols: 1fr 2.5fr 1fr; --pos: 36.11%;"><span class="seg blue"></span><span class="seg green"></span><span class="seg yellow"></span><span class="marker"></span></div>
-          <div class="range-labels" style="--cols: 1fr 2.5fr 1fr;"><span>呼吸偏低</span><span>正常</span><span>呼吸偏高</span></div>
+          <div class="range-labels" style="--cols: 1fr 2.5fr 1fr;"><span>频率偏低</span><span>正常</span><span>频率偏高</span></div>
         </div>
       </section>
+      <div class="medical-note">生命体征测量结果仅用于健康参考和趋势观察，不作为医学诊断依据。</div>
     </section>
   </main>
 </body>
