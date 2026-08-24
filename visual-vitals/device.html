@@ -1551,7 +1551,7 @@
         type: "human",
         duration: 4200,
         voice: "请站上转台。双手垂放，自然站立，保持静止。",
-        prompt: ["请站上转台", "双手垂放，自然站立，保持静止"]
+        prompt: ["请摘下眼镜、口罩或帽子，保持面部无遮挡", "请站上转台，双手垂放，自然站立"]
       },
       {
         key: "positioning",
@@ -1686,6 +1686,7 @@
 
       if (step.type === "human") {
         interactionEl.innerHTML = humanTemplate(step.key === "camera");
+        if (step.key === "positioning") updatePositioning();
       }
 
       if (step.type === "countdown") {
@@ -1719,6 +1720,7 @@
       }
 
       cancelAnimationFrame(frameId);
+      if (step.key === "positioning") frameId = requestAnimationFrame(updatePositioning);
       if (step.type === "capture") frameId = requestAnimationFrame(updateCapture);
       if (step.type === "processing") frameId = requestAnimationFrame(updateProcessing);
       playVoiceCue(step);
@@ -1748,6 +1750,17 @@
       if (value) value.textContent = remain;
       if (progress >= 1) return;
       frameId = requestAnimationFrame(updateCapture);
+    }
+
+    function updatePositioning() {
+      const step = FLOW[currentIndex];
+      if (!step || step.key !== "positioning") return;
+      const elapsed = performance.now() - stepStartedAt;
+      const isRotating = elapsed >= 900;
+      titleEl.textContent = isRotating ? "转台旋转中" : step.title;
+      interactionEl.classList.toggle("rotating", isRotating);
+      interactionEl.classList.toggle("prepare-turn", !isRotating);
+      frameId = requestAnimationFrame(updatePositioning);
     }
 
     function updateProcessing() {
