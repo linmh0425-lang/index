@@ -517,6 +517,18 @@
       padding: 0 14px;
       text-align: center;
     }
+    .range-empty {
+      display: grid;
+      place-items: center;
+      min-height: 44px;
+      padding-top: 0;
+      border: 1px dashed rgba(144,161,201,.35);
+      border-radius: 10px;
+      color: var(--muted);
+      background: rgba(16,42,81,.36);
+      font-size: 13px;
+      font-weight: 800;
+    }
     .range-bar {
       position: relative;
       display: grid;
@@ -616,12 +628,8 @@
       <section class="metric-card">
         <span class="metric-delta">较上次 ↓ 5</span>
         <div class="metric-head"><span class="metric-ico">V</span><span class="metric-name">心率变异性-SDNN <span class="help-tip" tabindex="0" title="正常心跳间期的标准差，反映短时心率变异性的总体波动参考。" data-tip="正常心跳间期的标准差，反映短时心率变异性的总体波动参考。">?</span> / ms</span></div>
-        <div class="metric-value"><strong>42</strong><small>正常</small></div>
-        <div class="range">
-          <div class="range-nums"><span style="--x:20%">30</span><span style="--x:80%">120</span></div>
-          <div class="range-bar" style="--cols: 1fr 3fr 1fr; --pos: 28%;"><span class="seg blue"></span><span class="seg green"></span><span class="seg yellow"></span><span class="marker"></span></div>
-          <div class="range-labels" style="--cols: 1fr 3fr 1fr;"><span>偏低</span><span>正常</span><span>偏高</span></div>
-        </div>
+        <div class="metric-value"><strong>42</strong><small>--</small></div>
+        <div class="range range-empty">--</div>
       </section>
       <section class="metric-card">
         <div class="metric-head"><span class="metric-ico">R</span><span class="metric-name">呼吸频率 <span class="help-tip" tabindex="0" title="静息状态下每分钟呼吸次数。" data-tip="静息状态下每分钟呼吸次数。">?</span> / 次/分钟</span></div>

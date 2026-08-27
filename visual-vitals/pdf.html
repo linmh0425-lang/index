@@ -280,6 +280,16 @@
       color: #6b7789;
       white-space: nowrap;
     }
+    .range-empty {
+      display: grid;
+      place-items: center;
+      min-height: 34px;
+      border: 1px dashed #b8cbe1;
+      border-radius: 6px;
+      color: #8aa0ba;
+      background: #f8fbff;
+      font-weight: 900;
+    }
     .range-line {
       position: relative;
       display: grid;
@@ -494,14 +504,8 @@
           <tr>
             <td>心率变异性-SDNN ms</td>
             <td>42</td>
-            <td>
-              <div class="range-cell" style="--cols: 1fr 3fr 1fr;">
-                <div class="range-ticks"><span style="--x:20%">30</span><span style="--x:80%">120</span></div>
-                <div class="range-line" style="--pos: 28%;"><span class="seg blue"></span><span class="seg green"></span><span class="seg yellow"></span><i class="range-marker" data-value="42"></i></div>
-                <div class="range-labels"><span>偏低</span><span>正常</span><span>偏高</span></div>
-              </div>
-            </td>
-            <td><span class="tag">正常</span></td>
+            <td><div class="range-empty">--</div></td>
+            <td><span class="tag">--</span></td>
             <td><span class="vital-delta"><span class="down">↓ 5</span></span></td>
           </tr>
           <tr>

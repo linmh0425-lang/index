@@ -225,6 +225,16 @@
       width: 430px;
       margin: 0 auto;
     }
+    .hrv-reference {
+      display: grid;
+      place-items: center;
+      min-height: 38px;
+      border: 1px dashed #cbd6e6;
+      border-radius: 6px;
+      color: #9aa7b8;
+      font-weight: 900;
+      background: #f8fbff;
+    }
     .scale-labels {
       position: relative;
       display: block;
@@ -539,14 +549,8 @@
             <tr>
               <td><span class="metric-name">心率变异性-SDNN <span class="help-tip" tabindex="0" title="正常心跳间期的标准差，反映短时心率变异性的总体波动参考。" data-tip="正常心跳间期的标准差，反映短时心率变异性的总体波动参考。">?</span></span><span class="name-muted">ms</span></td>
               <td><span class="value">42 <span class="delta down">↓ 5</span></span></td>
-              <td>
-                <div class="position">
-                  <div class="scale-labels"><span style="--x:20%">30</span><span style="--x:80%">120</span></div>
-                  <div class="bar" style="--cols: 1fr 3fr 1fr; --pos: 28%;"><span class="seg blue"></span><span class="seg green"></span><span class="seg yellow"></span><span class="marker"></span></div>
-                  <div class="scale-caption" style="--cols: 1fr 3fr 1fr;"><span>偏低</span><span>正常</span><span>偏高</span></div>
-                </div>
-              </td>
-              <td><span class="status ok">正常</span></td>
+              <td><div class="hrv-reference">--</div></td>
+              <td><span class="status trend">--</span></td>
             </tr>
             <tr>
               <td><span class="metric-name">压力指数 <span class="help-tip" tabindex="0" title="基于视觉相机提取的连续PP间期序列，按Baevsky Stress Index公式计算的生理压力参考值。" data-tip="基于视觉相机提取的连续PP间期序列，按Baevsky Stress Index公式计算的生理压力参考值，仅用于健康趋势观察。">?</span></span></td>
