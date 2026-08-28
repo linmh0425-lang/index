@@ -490,6 +490,11 @@
     }
     .metric-value strong.low { background: var(--blue-low); color: #fff; }
     .metric-value strong.watch { background: var(--yellow); color: #111827; }
+    .metric-value strong.neutral {
+      border: 1px solid rgba(96,165,250,.45);
+      background: rgba(96,165,250,.16);
+      color: #dbeafe;
+    }
     .metric-value small { color: var(--muted); font-size: 13px; }
     .range {
       position: relative;
@@ -516,15 +521,6 @@
       font-size: 12px;
       padding: 0 14px;
       text-align: center;
-    }
-    .range-empty {
-      display: grid;
-      place-items: center;
-      min-height: 44px;
-      padding-top: 0;
-      color: var(--muted);
-      font-size: 13px;
-      font-weight: 800;
     }
     .range-bar {
       position: relative;
@@ -562,7 +558,7 @@
     <div class="app-title"><button class="icon-btn">‹</button><strong>Visbody</strong><button class="icon-btn">...</button></div>
     <div class="top-actions"><span>≡</span><span>↺</span></div>
     <nav class="tabs" aria-label="报告分类">
-      <button class="tab">体成分</button><button class="tab">体态</button><button class="tab">体围</button><button class="tab">肩部</button><button class="tab is-active">生命</button>
+      <button class="tab">体成分</button><button class="tab">体态</button><button class="tab">体围</button><button class="tab">肩部</button><button class="tab is-active">体征评估</button>
     </nav>
     <section class="content">
       <div class="meta-row"><span>2026/08/04 17:00</span><span>趋势  分享</span></div>
@@ -571,6 +567,13 @@
         <div class="user-grid"><span>身高：175 cm</span><span>年龄：36 岁</span></div>
       </div>
       <div class="condition-strip">为保证测量结果稳定性，需保持面部无遮挡、身体静止！</div>
+      <div class="compare-box" aria-label="选择历史报告对比">
+        <div class="compare-grid">
+          <strong>2026/08/03</strong>
+          <span>对比</span>
+          <span>2026/08/04（本次）</span>
+        </div>
+      </div>
       <section class="summary-card">
         <div class="score-panel-title"><span>生命体征健康参考状态</span></div>
         <div class="gauge-shell">
@@ -603,14 +606,9 @@
         </div>
       </section>
       <section class="metric-card">
-        <span class="metric-delta">较上次 ↓ 1</span>
-        <div class="metric-head"><span class="metric-ico">O</span><span class="metric-name">血氧饱和度 <span class="help-tip" tabindex="0" title="血液中氧合血红蛋白占总血红蛋白的比例。" data-tip="血液中氧合血红蛋白占总血红蛋白的比例。">?</span> / SpO2%</span></div>
-        <div class="metric-value"><strong class="low">94</strong><small>偏低</small></div>
-        <div class="range">
-          <div class="range-nums"><span style="--x:20.41%">90</span><span style="--x:44.9%">95</span></div>
-          <div class="range-bar" style="--cols: 1fr 1.2fr 2.7fr; --pos: 40%;"><span class="seg purple"></span><span class="seg blue"></span><span class="seg green"></span><span class="marker"></span></div>
-          <div class="range-labels" style="--cols: 1fr 1.2fr 2.7fr;"><span>明显偏低</span><span>偏低</span><span>正常</span></div>
-        </div>
+        <span class="metric-delta">较上次 ↓ 5</span>
+        <div class="metric-head"><span class="metric-ico">V</span><span class="metric-name">心率变异性-SDNN <span class="help-tip" tabindex="0" title="全部正常窦性心搏间期的标准差，用于评估自主神经整体调节能力，受个体差异影响较大，不设统一固定参考范围，仅展示本次数值和与上次测量变化。" data-tip="全部正常窦性心搏间期的标准差，用于评估自主神经整体调节能力，受个体差异影响较大，不设统一固定参考范围，仅展示本次数值和与上次测量变化。">?</span> / ms</span></div>
+        <div class="metric-value"><strong class="neutral">42</strong></div>
       </section>
       <section class="metric-card">
         <span class="metric-delta">较上次 ↑ 18</span>
@@ -623,18 +621,22 @@
         </div>
       </section>
       <section class="metric-card">
-        <span class="metric-delta">较上次 ↓ 5</span>
-        <div class="metric-head"><span class="metric-ico">V</span><span class="metric-name">心率变异性-SDNN <span class="help-tip" tabindex="0" title="全部正常窦性心搏间期的标准差，用于评估自主神经整体调节能力，受个体差异影响较大，不设统一固定参考范围，仅展示本次数值和与上次测量变化。" data-tip="全部正常窦性心搏间期的标准差，用于评估自主神经整体调节能力，受个体差异影响较大，不设统一固定参考范围，仅展示本次数值和与上次测量变化。">?</span> / ms</span></div>
-        <div class="metric-value"><strong>42</strong><small>--</small></div>
-        <div class="range range-empty">--</div>
-      </section>
-      <section class="metric-card">
         <div class="metric-head"><span class="metric-ico">R</span><span class="metric-name">呼吸频率 <span class="help-tip" tabindex="0" title="静息状态下每分钟呼吸次数。" data-tip="静息状态下每分钟呼吸次数。">?</span> / 次/分钟</span></div>
         <div class="metric-value"><strong>14</strong><small>正常</small></div>
         <div class="range">
           <div class="range-nums"><span style="--x:22.22%">12</span><span style="--x:77.78%">20</span></div>
           <div class="range-bar" style="--cols: 1fr 2.5fr 1fr; --pos: 36.11%;"><span class="seg blue"></span><span class="seg green"></span><span class="seg yellow"></span><span class="marker"></span></div>
           <div class="range-labels" style="--cols: 1fr 2.5fr 1fr;"><span>频率偏低</span><span>正常</span><span>频率偏高</span></div>
+        </div>
+      </section>
+      <section class="metric-card">
+        <span class="metric-delta">较上次 ↓ 1</span>
+        <div class="metric-head"><span class="metric-ico">O</span><span class="metric-name">血氧饱和度 <span class="help-tip" tabindex="0" title="血液中氧合血红蛋白占总血红蛋白的比例。" data-tip="血液中氧合血红蛋白占总血红蛋白的比例。">?</span> / SpO2%</span></div>
+        <div class="metric-value"><strong class="low">94</strong><small>偏低</small></div>
+        <div class="range">
+          <div class="range-nums"><span style="--x:20.41%">90</span><span style="--x:44.9%">95</span></div>
+          <div class="range-bar" style="--cols: 1fr 1.2fr 2.7fr; --pos: 40%;"><span class="seg purple"></span><span class="seg blue"></span><span class="seg green"></span><span class="marker"></span></div>
+          <div class="range-labels" style="--cols: 1fr 1.2fr 2.7fr;"><span>明显偏低</span><span>偏低</span><span>正常</span></div>
         </div>
       </section>
       <div class="medical-note">声明：生命体征测量结果仅用于健康参考和趋势观察，不作为医学诊断依据。</div>
