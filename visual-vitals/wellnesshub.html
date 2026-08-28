@@ -106,6 +106,24 @@
       font-size: 12px;
       font-weight: 800;
     }
+    .history-compare {
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      color: #68788e;
+      font-size: 13px;
+      font-weight: 800;
+      white-space: nowrap;
+    }
+    .history-compare::after {
+      content: "";
+      width: 0;
+      height: 0;
+      margin-top: 2px;
+      border-left: 4px solid transparent;
+      border-right: 4px solid transparent;
+      border-top: 5px solid #68788e;
+    }
     .sub-title {
       height: 34px;
       display: flex;
@@ -511,8 +529,9 @@
     <nav class="tabs" aria-label="报告类型">
       <div class="tab">身体成分</div><div class="tab">体态评估</div><div class="tab">脊柱评估</div><div class="tab">体围测量</div><div class="tab">平衡评估</div><div class="tab">肩部功能</div><div class="tab">颈部功能</div><div class="tab">热态测量</div><div class="tab active">体征评估</div>
     </nav>
-    <div class="section-title condition-only">
+    <div class="section-title">
       <small class="condition-note">为保证测量结果稳定性，需保持面部无遮挡、身体静止！</small>
+      <span class="history-compare">历史对比时间：2026-08-03 16:28:56</span>
     </div>
     <section class="page-grid">
       <aside class="summary-col">
