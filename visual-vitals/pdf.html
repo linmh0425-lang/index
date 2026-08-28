@@ -351,6 +351,13 @@
     }
     .tag.low { background: var(--blue-low); }
     .tag.watch { background: var(--yellow); color: #fff; }
+    .tag.plain {
+      min-width: 0;
+      height: auto;
+      padding: 0;
+      background: transparent;
+      color: #8aa0ba;
+    }
     .small-note {
       margin-top: 12px;
       padding: 9px 10px;
@@ -502,7 +509,7 @@
             <td>心率变异性-SDNN ms</td>
             <td>42</td>
             <td><div class="range-empty">--</div></td>
-            <td><span class="tag">--</span></td>
+            <td><span class="tag plain">--</span></td>
             <td><span class="vital-delta"><span class="down">↓ 5</span></span></td>
           </tr>
           <tr>
@@ -579,7 +586,7 @@
           <div class="history-labels"><span>08/01</span><span>08/02</span><span>08/03</span><span>08/04</span><span>08/05</span><span>08/06</span><span>08/07</span></div>
         </article>
       </section>
-      <div class="small-note">生命体征测量结果仅用于健康参考和趋势观察，不作为医学诊断依据。</div>
+      <div class="small-note">声明：生命体征测量结果仅用于健康参考和趋势观察，不作为医学诊断依据。</div>
       <div class="footer"><span>VISBODY 视觉生命体征报告 Demo</span><span>第 1 页 / 共 1 页</span></div>
     </section>
   </main>
