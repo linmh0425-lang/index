@@ -132,14 +132,12 @@
       font-size: 15px;
     }
     .condition-strip {
-      margin: -2px 0 14px;
-      padding: 10px 12px;
-      border: 1px solid rgba(71,166,224,.54);
-      border-radius: 6px;
-      background: rgba(16,42,81,.66);
+      margin: -2px 2px 14px;
+      padding: 0;
       color: #c7d3e9;
-      font-size: 13px;
-      line-height: 1.5;
+      font-size: 12px;
+      line-height: 1.4;
+      white-space: nowrap;
     }
     .compare-box,
     .metric-card {
@@ -149,13 +147,11 @@
     }
     .medical-note {
       margin-top: 18px;
-      padding: 11px 12px;
-      border: 1px solid rgba(71,166,224,.45);
-      border-radius: 6px;
-      background: rgba(16,36,73,.72);
+      padding: 0 2px;
       color: #9fb4d1;
       font-size: 12px;
-      line-height: 1.6;
+      line-height: 1.5;
+      white-space: nowrap;
     }
     .summary-card {
       --score-percent: 68%;
@@ -566,14 +562,6 @@
         <div class="user-name">一二三四五六七八九十 <span class="male">♂</span></div>
         <div class="user-grid"><span>身高：175 cm</span><span>年龄：36 岁</span></div>
       </div>
-      <div class="condition-strip">为保证测量结果稳定性，需保持面部无遮挡、身体静止！</div>
-      <div class="compare-box" aria-label="选择历史报告对比">
-        <div class="compare-grid">
-          <strong>2026/08/03</strong>
-          <span>对比</span>
-          <span>2026/08/04（本次）</span>
-        </div>
-      </div>
       <section class="summary-card">
         <div class="score-panel-title"><span>健康参考状态</span></div>
         <div class="gauge-shell">
@@ -595,6 +583,14 @@
         </div>
         <div class="score-divider"><span></span></div>
       </section>
+      <div class="condition-strip">为保证测量结果稳定性，需保持面部无遮挡、身体静止！</div>
+      <div class="compare-box" aria-label="选择历史报告对比">
+        <div class="compare-grid">
+          <strong>2026/08/03</strong>
+          <span>对比</span>
+          <span>2026/08/04（本次）</span>
+        </div>
+      </div>
       <section class="metric-card">
         <span class="metric-delta">较上次 ↑ 2</span>
         <div class="metric-head"><span class="metric-ico">H</span><span class="metric-name">静息心率 <span class="help-tip" tabindex="0" title="静息状态下每分钟心脏跳动次数。" data-tip="静息状态下每分钟心脏跳动次数。">?</span> / 次/分钟</span></div>
